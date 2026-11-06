@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'daily-driver-v1';
+﻿const CACHE_NAME = 'daily-driver-v2'; // Increment from v1 to v2
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
