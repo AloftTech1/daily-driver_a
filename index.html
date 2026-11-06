@@ -6,28 +6,27 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="DailyDriver" />
-  <meta name="theme-color" content="#fbfbfd" />
-  <link rel="manifest" href="./manifest.json" >
+  <meta name="theme-color" content="#fcfcfd" />
   <title>Daily Driver — iOS 27 Liquid Glass PWA</title>
 
-  <!-- Dynamic Apple Touch Icon & PWA Manifest -->
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23f5f5f7'/><circle cx='45' cy='45' r='4' fill='%23c7c7cc'/><circle cx='90' cy='45' r='4' fill='%23c7c7cc'/><circle cx='135' cy='45' r='4' fill='%23c7c7cc'/><rect x='40' y='35' width='100' height='75' rx='12' fill='%23ffe066'/><path d='M55 115 Q35 125 40 148' stroke='%2338bdf8' stroke-width='7' fill='none' stroke-linecap='round'/></svg>" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='42' fill='%23f5f5f7'/><circle cx='45' cy='45' r='4' fill='%23c7c7cc'/><circle cx='90' cy='45' r='4' fill='%23c7c7cc'/><circle cx='135' cy='45' r='4' fill='%23c7c7cc'/><rect x='40' y='35' width='100' height='75' rx='14' fill='%23ffe46b'/><path d='M55 115 Q35 125 40 148' stroke='%23007aff' stroke-width='8' fill='none' stroke-linecap='round'/></svg>" />
 
   <style>
     :root {
       --bg-canvas: #fcfcfd;
-      --dot-color: #d1d1d6;
-      --glass-bg: rgba(255, 255, 255, 0.72);
-      --glass-border: rgba(255, 255, 255, 0.88);
-      --glass-outer-border: rgba(0, 0, 0, 0.07);
-      --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+      --dot-color: #cbcbd0;
+      --glass-bg: rgba(255, 255, 255, 0.74);
+      --glass-outer-border: rgba(0, 0, 0, 0.08);
+      --glass-shadow: 0 12px 34px rgba(0, 0, 0, 0.09), inset 0 1px 1px rgba(255, 255, 255, 0.96);
       --text-primary: #1c1c1e;
       --text-secondary: #6e6e73;
       --accent-blue: #007aff;
-      --accent-cyan: #47b5ff;
       --sticky-yellow: #ffe46b;
-      --safe-top: env(safe-area-inset-top, 16px);
-      --safe-bottom: env(safe-area-inset-bottom, 18px);
+      --safe-top: env(safe-area-inset-top, 14px);
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+      --spring-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+      --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     * {
@@ -53,24 +52,26 @@
       color: var(--text-primary);
     }
 
-    /* Dotted Grid Background (Matches Image 1 & 2) */
+    /* Infinite Dotted Grid Background */
     .dotted-grid {
       background-color: var(--bg-canvas);
-      background-image: radial-gradient(var(--dot-color) 1.55px, transparent 1.55px);
+      background-image: radial-gradient(var(--dot-color) 1.6px, transparent 1.6px);
       background-size: 24px 24px;
-      background-position: 12px 12px;
+      background-position: 0px 0px;
+      will-change: background-position, background-size;
     }
 
     /* iOS 27 Liquid Glass Surface */
     .liquid-glass {
       background: var(--glass-bg);
-      backdrop-filter: blur(28px) saturate(200%);
-      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      backdrop-filter: blur(30px) saturate(210%);
+      -webkit-backdrop-filter: blur(30px) saturate(210%);
       border: 1px solid var(--glass-outer-border);
       box-shadow: var(--glass-shadow);
+      transition: transform 0.24s var(--spring-smooth), box-shadow 0.24s var(--spring-smooth), background 0.2s ease;
     }
 
-    /* Screen Container */
+    /* Screen Transitions */
     .screen {
       position: absolute;
       inset: 0;
@@ -79,28 +80,28 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      animation: screenFade 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity: 0;
+      transform: scale(0.985);
+      transition: opacity 0.28s var(--spring-smooth), transform 0.28s var(--spring-smooth);
     }
 
     .screen.active {
       display: flex;
+      opacity: 1;
+      transform: scale(1);
     }
 
-    @keyframes screenFade {
-      from { opacity: 0; transform: scale(0.985); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    /* Top Floating Navigation Bar (Matches Image 1) */
+    /* Top Floating Navigation Bar */
     .top-bar {
       position: fixed;
       top: calc(var(--safe-top) + 8px);
-      left: 16px;
-      right: 16px;
+      left: 14px;
+      right: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 100;
+      gap: 8px;
+      z-index: 120;
       pointer-events: none;
     }
 
@@ -116,25 +117,52 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s;
       color: var(--text-primary);
+      flex-shrink: 0;
+      transition: transform 0.2s var(--spring-bounce), background 0.2s ease;
     }
 
-    .circle-btn:active, .pill-btn:active {
-      transform: scale(0.91);
+    .circle-btn:active, .icon-btn:active, .salient-vault-pill:active {
+      transform: scale(0.88);
+    }
+
+    /* Salient Home Brainstorm Vault Pill */
+    .salient-vault-pill {
+      height: 42px;
+      padding: 0 14px;
+      border-radius: 21px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.22s var(--spring-bounce), box-shadow 0.22s ease;
+    }
+
+    .vault-count-badge {
+      background: var(--accent-blue);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 10px;
     }
 
     .top-right-pill {
       height: 46px;
       border-radius: 25px;
-      padding: 0 8px;
+      padding: 0 6px;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 2px;
+      flex-shrink: 0;
     }
 
     .icon-btn {
-      width: 40px;
+      width: 38px;
       height: 38px;
       border-radius: 19px;
       border: none;
@@ -144,29 +172,24 @@
       justify-content: center;
       cursor: pointer;
       color: var(--text-primary);
-      transition: background 0.15s, transform 0.15s;
+      transition: transform 0.2s var(--spring-bounce), background 0.18s ease, color 0.18s ease;
     }
 
     .icon-btn.active-tool {
-      background: rgba(0, 122, 255, 0.14);
+      background: rgba(0, 122, 255, 0.15);
       color: var(--accent-blue);
     }
 
-    .icon-btn:active {
-      transform: scale(0.88);
-      background: rgba(0, 0, 0, 0.06);
-    }
-
-    /* Bottom Floating Toolbar (Matches Image 1) */
+    /* Bottom Floating Toolbar */
     .bottom-bar {
       position: fixed;
       bottom: calc(var(--safe-bottom) + 10px);
-      left: 20px;
-      right: 20px;
+      left: 16px;
+      right: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 100;
+      z-index: 120;
       pointer-events: none;
     }
 
@@ -177,10 +200,10 @@
     .center-tool-pill {
       height: 52px;
       border-radius: 26px;
-      padding: 0 14px;
+      padding: 0 12px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 10px;
     }
 
     .bottom-circle-btn {
@@ -189,60 +212,143 @@
       border-radius: 50%;
     }
 
-    /* Canvas Workspace */
-    .canvas-area {
+    /* Floating Zoom Bar (Infinite Canvas Controls) */
+    .zoom-pill {
+      position: fixed;
+      bottom: calc(var(--safe-bottom) + 74px);
+      left: 50%;
+      transform: translateX(-50%);
+      height: 38px;
+      border-radius: 19px;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      z-index: 115;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .zoom-btn {
+      border: none;
+      background: transparent;
+      width: 30px;
+      height: 30px;
+      border-radius: 15px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.18s var(--spring-bounce), background 0.15s;
+    }
+
+    .zoom-btn:active {
+      transform: scale(0.85);
+      background: rgba(0, 0, 0, 0.07);
+    }
+
+    /* Infinite Canvas Viewport & Transformed World Plane */
+    .canvas-viewport {
       position: relative;
       flex: 1;
       width: 100%;
       height: 100%;
       overflow: hidden;
+      touch-action: none;
+      cursor: grab;
     }
 
-    canvas.drawing-layer {
+    .canvas-viewport:active {
+      cursor: grabbing;
+    }
+
+    .world-plane {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 5;
+      top: 0;
+      left: 0;
+      width: 1px;
+      height: 1px;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+
+    .world-plane.smooth-zoom {
+      transition: transform 0.26s var(--spring-smooth);
+    }
+
+    /* Freehand Ink Layer inside World Plane */
+    svg.ink-layer {
+      position: absolute;
+      top: -4000px;
+      left: -4000px;
+      width: 8000px;
+      height: 8000px;
+      z-index: 10;
       pointer-events: none;
+      overflow: visible;
     }
 
-    canvas.drawing-layer.drawing-active {
-      pointer-events: auto;
-      cursor: crosshair;
-    }
-
+    /* HIGH-VISIBILITY TOP-LAYER ARROWS (Z-INDEX 85 — ABOVE CHECKLIST BOXES & STICKIES) */
     svg.arrow-layer {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 15;
+      top: -4000px;
+      left: -4000px;
+      width: 8000px;
+      height: 8000px;
+      z-index: 85;
       pointer-events: none;
+      overflow: visible;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
     }
 
-    /* Sticky Note Component (Matches Image 2 yellow box + 8 blue handles) */
+    /* Sticky Note Component (Z-Index 35) */
     .sticky-note {
       position: absolute;
       width: 225px;
-      min-height: 185px;
+      min-height: 180px;
       background: var(--sticky-yellow);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.10), 0 2px 5px rgba(0, 0, 0, 0.06);
-      padding: 18px 16px 34px 16px;
-      z-index: 20;
+      border-radius: 6px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+      padding: 24px 16px 38px 16px;
+      z-index: 35;
       display: flex;
       flex-direction: column;
       justify-content: center;
       touch-action: none;
-      transition: box-shadow 0.2s;
+      transition: box-shadow 0.24s var(--spring-smooth), transform 0.2s var(--spring-smooth);
+    }
+
+    .sticky-note.dragging-item {
+      box-shadow: 0 22px 44px rgba(0, 0, 0, 0.22);
+      transform: scale(1.03);
+      z-index: 90;
     }
 
     .sticky-note.selected {
-      outline: 1.5px solid rgba(56, 189, 248, 0.65);
+      outline: 2px solid #2ea8ff;
+    }
+
+    .sticky-drag-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      color: rgba(0, 0, 0, 0.32);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
     }
 
     .sticky-content {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 500;
       line-height: 1.32;
       text-align: center;
@@ -251,7 +357,7 @@
       word-break: break-word;
     }
 
-    /* 8 Blue Selection Handles from Image 2 */
+    /* 8 Blue Selection Handles */
     .handle-dot {
       position: absolute;
       width: 10px;
@@ -261,11 +367,13 @@
       border-radius: 50%;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.15s;
+      transform: scale(0.5);
+      transition: opacity 0.2s var(--spring-smooth), transform 0.2s var(--spring-bounce);
     }
 
     .sticky-note.selected .handle-dot {
       opacity: 1;
+      transform: scale(1);
     }
 
     .handle-tl { top: -6px; left: -6px; }
@@ -279,9 +387,9 @@
 
     .sticky-actions {
       position: absolute;
-      bottom: 6px;
-      left: 8px;
-      right: 8px;
+      bottom: 7px;
+      left: 10px;
+      right: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -289,56 +397,95 @@
     }
 
     .point-btn {
-      background: rgba(255, 255, 255, 0.78);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
-      padding: 3px 8px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 11px;
+      padding: 4px 9px;
       font-size: 11px;
-      font-weight: 600;
-      color: #0284c7;
+      font-weight: 700;
+      color: #007aff;
       cursor: pointer;
+      transition: transform 0.18s var(--spring-bounce), background 0.18s;
     }
 
     .point-btn.linking {
-      background: #0284c7;
+      background: #007aff;
       color: #fff;
       animation: pulse 1s infinite;
     }
 
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.06); }
+      50% { transform: scale(1.07); }
     }
 
-    /* Spatial Checklist Container on Canvas (Matches Image 2) */
+    /* Moveable Spatial Checklist Box (Z-Index 25) */
     .spatial-checklist-box {
       position: absolute;
-      left: 26px;
-      top: 410px;
-      min-width: 280px;
-      max-width: calc(100vw - 44px);
-      padding: 14px 16px;
-      border-radius: 20px;
-      z-index: 18;
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(0, 0, 0, 0.05);
+      width: 325px;
+      padding: 10px 16px 16px 16px;
+      border-radius: 24px;
+      z-index: 25;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.09), 0 1px 3px rgba(0, 0, 0, 0.05);
+      touch-action: none;
+      transition: box-shadow 0.24s var(--spring-smooth), transform 0.2s var(--spring-smooth);
+    }
+
+    .spatial-checklist-box.dragging-item {
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18);
+      transform: scale(1.02);
+      z-index: 45;
+    }
+
+    .box-drag-handle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 4px 8px 4px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      cursor: grab;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 700;
     }
 
     .spatial-item-row {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 8px 6px;
-      border-radius: 12px;
-      transition: background 0.18s;
+      gap: 10px;
+      padding: 8px 8px;
+      border-radius: 14px;
+      margin-bottom: 4px;
+      transition: background 0.2s var(--spring-smooth), transform 0.2s var(--spring-bounce);
     }
 
     .spatial-item-row.link-target-mode {
-      background: rgba(56, 189, 248, 0.16);
-      outline: 1.5px dashed #38bdf8;
+      background: rgba(0, 122, 255, 0.12);
+      outline: 1.5px dashed #007aff;
       cursor: pointer;
+    }
+
+    .spatial-item-row.link-target-mode:active {
+      transform: scale(0.96);
+    }
+
+    .item-color-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     }
 
     .bullet-check {
@@ -352,6 +499,11 @@
       cursor: pointer;
       flex-shrink: 0;
       background: transparent;
+      transition: transform 0.22s var(--spring-bounce), background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .bullet-check:active {
+      transform: scale(0.82);
     }
 
     .bullet-check::after {
@@ -360,6 +512,7 @@
       height: 7px;
       border-radius: 50%;
       background: #1c1c1e;
+      transition: transform 0.2s var(--spring-bounce), background 0.2s ease;
     }
 
     .bullet-check.checked {
@@ -369,15 +522,17 @@
 
     .bullet-check.checked::after {
       background: #fff;
+      transform: scale(1.15);
     }
 
     .spatial-item-text {
-      font-size: 27px;
-      font-weight: 450;
+      font-size: 21px;
+      font-weight: 500;
       color: #111;
       outline: none;
       flex: 1;
       line-height: 1.25;
+      transition: color 0.2s ease;
     }
 
     .spatial-item-text.checked {
@@ -385,34 +540,39 @@
       color: #8e8e93;
     }
 
-    /* Main Menu Sheet (Liquid Glass Drawer) */
+    /* Drawers & Modals */
     .menu-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.22);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      background: rgba(0, 0, 0, 0.24);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       z-index: 250;
       display: none;
       align-items: flex-end;
       justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s var(--spring-smooth);
     }
 
     .menu-overlay.open {
       display: flex;
+      opacity: 1;
     }
 
     .menu-sheet {
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
+      max-height: 85vh;
+      overflow-y: auto;
       border-radius: 34px 34px 0 0;
       padding: 16px 20px calc(var(--safe-bottom) + 24px) 20px;
-      background: rgba(250, 250, 252, 0.84);
-      backdrop-filter: blur(35px) saturate(210%);
-      -webkit-backdrop-filter: blur(35px) saturate(210%);
-      border-top: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.14);
-      animation: slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      background: rgba(250, 250, 252, 0.88);
+      backdrop-filter: blur(36px) saturate(210%);
+      -webkit-backdrop-filter: blur(36px) saturate(210%);
+      border-top: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow: 0 -14px 44px rgba(0, 0, 0, 0.16);
+      animation: slideUp 0.32s var(--spring-smooth);
     }
 
     @keyframes slideUp {
@@ -420,7 +580,7 @@
       to { transform: translateY(0); }
     }
 
-    .sheet-Grabber {
+    .sheet-grabber {
       width: 42px;
       height: 5px;
       background: rgba(0, 0, 0, 0.18);
@@ -428,14 +588,14 @@
       margin: 0 auto 16px auto;
     }
 
-    /* Gesture-Enabled Menu Pill for "To-Do Lists / Checklists" */
+    /* Gesture-Enabled Menu Pill */
     .swipe-menu-container {
       position: relative;
       border-radius: 22px;
       overflow: hidden;
       margin-bottom: 12px;
       background: linear-gradient(90deg, #007aff 0%, #5856d6 50%, #ff9500 100%);
-      box-shadow: 0 6px 20px rgba(0, 122, 255, 0.15);
+      box-shadow: 0 8px 22px rgba(0, 122, 255, 0.16);
     }
 
     .swipe-bg-labels {
@@ -448,13 +608,12 @@
       color: #fff;
       font-size: 12px;
       font-weight: 700;
-      letter-spacing: 0.2px;
       pointer-events: none;
     }
 
     .swipe-item-card {
       position: relative;
-      background: rgba(255, 255, 255, 0.94);
+      background: rgba(255, 255, 255, 0.95);
       padding: 16px 18px;
       border-radius: 22px;
       display: flex;
@@ -462,7 +621,7 @@
       justify-content: space-between;
       cursor: pointer;
       touch-action: pan-y;
-      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.28s var(--spring-smooth);
     }
 
     .swipe-item-card.dragging {
@@ -470,8 +629,8 @@
     }
 
     .menu-row-secondary {
-      background: rgba(255, 255, 255, 0.65);
-      border: 1px solid rgba(0, 0, 0, 0.05);
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(0, 0, 0, 0.06);
       padding: 14px 18px;
       border-radius: 18px;
       display: flex;
@@ -479,9 +638,14 @@
       justify-content: space-between;
       margin-bottom: 10px;
       cursor: pointer;
+      transition: transform 0.2s var(--spring-bounce), background 0.18s;
     }
 
-    /* Checklists Board Screen & Quick Checklist Screen */
+    .menu-row-secondary:active {
+      transform: scale(0.97);
+    }
+
+    /* Scrollable Board & Quick Checklist Screens */
     .scroll-content {
       flex: 1;
       overflow-y: auto;
@@ -492,10 +656,9 @@
       border-radius: 24px;
       padding: 18px;
       margin-bottom: 20px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(240,248,255,0.82));
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,248,255,0.85));
       border: 1px solid rgba(0, 122, 255, 0.18);
       box-shadow: 0 12px 28px rgba(0, 122, 255, 0.08);
-      position: relative;
     }
 
     .board-grid {
@@ -508,12 +671,11 @@
       border-radius: 22px;
       padding: 18px;
       cursor: pointer;
-      transition: transform 0.18s;
-      position: relative;
+      transition: transform 0.22s var(--spring-bounce), box-shadow 0.22s ease;
     }
 
     .checklist-card:active {
-      transform: scale(0.97);
+      transform: scale(0.96);
     }
 
     .badge {
@@ -521,20 +683,12 @@
       padding: 4px 10px;
       border-radius: 12px;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    .badge-quick {
-      background: rgba(0, 122, 255, 0.12);
-      color: #007aff;
-    }
+    .badge-quick { background: rgba(0, 122, 255, 0.12); color: #007aff; }
+    .badge-spatial { background: rgba(255, 149, 0, 0.15); color: #d97706; }
 
-    .badge-spatial {
-      background: rgba(255, 149, 0, 0.15);
-      color: #d97706;
-    }
-
-    /* Quick Checklist Header Metadata */
     .timestamp-banner {
       border-radius: 20px;
       padding: 14px 16px;
@@ -551,15 +705,16 @@
       padding: 14px 16px;
       border-radius: 16px;
       margin-bottom: 10px;
-      background: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.82);
       border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s var(--spring-smooth);
     }
 
-    /* iOS 27 Tap-and-Hold Context Menu & Info Modal */
+    /* Context Menu Modal */
     .context-menu-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.26);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       z-index: 400;
@@ -574,25 +729,25 @@
     }
 
     .context-menu-box {
-      width: 290px;
+      width: 310px;
       border-radius: 24px;
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(35px) saturate(200%);
-      -webkit-backdrop-filter: blur(35px) saturate(200%);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
-      animation: popIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(36px) saturate(200%);
+      -webkit-backdrop-filter: blur(36px) saturate(200%);
+      box-shadow: 0 22px 54px rgba(0, 0, 0, 0.24);
+      animation: popIn 0.24s var(--spring-bounce);
     }
 
     @keyframes popIn {
-      from { opacity: 0; transform: scale(0.85); }
+      from { opacity: 0; transform: scale(0.84); }
       to { opacity: 1; transform: scale(1); }
     }
 
     .context-menu-header {
       padding: 14px 16px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-secondary);
       border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     }
@@ -607,8 +762,15 @@
       justify-content: space-between;
       align-items: center;
       font-size: 15px;
+      font-weight: 500;
       color: var(--text-primary);
       cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+
+    .context-menu-btn:active {
+      background: rgba(0, 122, 255, 0.1);
     }
 
     .context-menu-btn.danger {
@@ -620,12 +782,14 @@
       top: calc(var(--safe-top) + 64px);
       left: 50%;
       transform: translateX(-50%);
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 9px 18px;
+      border-radius: 22px;
       font-size: 13px;
-      font-weight: 600;
-      z-index: 350;
+      font-weight: 700;
+      z-index: 450;
       display: none;
+      white-space: nowrap;
+      animation: popIn 0.22s var(--spring-bounce);
     }
   </style>
 </head>
@@ -634,11 +798,13 @@
   <!-- Floating Status Toast -->
   <div id="toastPill" class="toast-pill liquid-glass"></div>
 
+  <!-- Hidden File Input for Restoring JSON Backups -->
+  <input type="file" id="backupFileInput" accept=".json,application/json" style="display:none" onchange="handleBackupFileImport(event)" />
+
   <!-- =========================================================
-       SCREEN 1: HOME SCREEN — DOTTED GRID QUICK BRAINSTORM (Image 1)
+       SCREEN 1: HOME SCREEN — INFINITE DOTTED BRAINSTORM CANVAS
        ========================================================= -->
-  <section id="homeScreen" class="screen active dotted-grid">
-    <!-- Top Floating Bar (Matches Image 1) -->
+  <section id="homeScreen" class="screen active">
     <div class="top-bar">
       <div class="circle-btn liquid-glass" onclick="openMainMenu()" title="Open Daily Driver Menu">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -646,13 +812,19 @@
         </svg>
       </div>
 
+      <!-- Salient Brainstorm Vault Pill -->
+      <div class="salient-vault-pill liquid-glass" onclick="openVaultModal()" title="View Saved Home Brainstorms">
+        <span>🗂️ Brainstorm Vault</span>
+        <span id="homeVaultCount" class="vault-count-badge">0</span>
+      </div>
+
       <div class="top-right-pill liquid-glass">
         <button class="icon-btn" onclick="undoHomeStroke()" title="Undo Stroke">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/>
           </svg>
         </button>
-        <button class="icon-btn" onclick="shareCurrentState()" title="Export / Share">
+        <button class="icon-btn" onclick="openShareAndBackupSheet()" title="Save & Share Options">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
           </svg>
@@ -665,32 +837,44 @@
       </div>
     </div>
 
-    <!-- Interactive Brainstorm Area -->
-    <div id="homeCanvasArea" class="canvas-area">
-      <canvas id="homeDrawingCanvas" class="drawing-layer"></canvas>
-      <div id="homeStickyContainer"></div>
+    <!-- Infinite Canvas Viewport -->
+    <div id="homeViewport" class="canvas-viewport dotted-grid">
+      <div id="homeWorld" class="world-plane">
+        <svg id="homeInkSvg" class="ink-layer"></svg>
+        <div id="homeStickyContainer"></div>
+      </div>
     </div>
 
-    <!-- Bottom Floating Toolbar (Matches Image 1) -->
+    <!-- Floating Zoom Bar -->
+    <div class="zoom-pill liquid-glass">
+      <button class="zoom-btn" onclick="stepZoom('home', -0.2)">−</button>
+      <span id="homeZoomLabel" onclick="resetViewport('home')" style="padding:0 6px; cursor:pointer;">100%</span>
+      <button class="zoom-btn" onclick="stepZoom('home', 0.2)">+</button>
+    </div>
+
+    <!-- Bottom Floating Toolbar -->
     <div class="bottom-bar">
-      <!-- Left Menu Button -->
       <div class="circle-btn bottom-circle-btn liquid-glass" onclick="openMainMenu()" title="Menu & Checklists">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
           <rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="4" x2="8" y2="20"/>
         </svg>
       </div>
 
-      <!-- Center Capsule: Pen, Text Box, Attachment -->
       <div class="center-tool-pill liquid-glass">
         <button id="homePenBtn" class="icon-btn" onclick="toggleHomeDrawing()" title="Freehand Pen Tool">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
             <circle cx="12" cy="12" r="9"/><path d="m9 17 3-8 3 8"/><path d="M10 14h4"/>
           </svg>
         </button>
-        <button class="icon-btn" onclick="addHomeStickyNote('Tap to brainstorm idea...')" title="Add Text / Sticky Note">
+        <button class="icon-btn" onclick="addHomeStickyNote('Tap to brainstorm idea...')" title="Add Sticky Note">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
             <rect x="3" y="6" width="18" height="12" rx="2" stroke-dasharray="3 2"/>
             <text x="8.5" y="15" font-size="10" font-weight="bold" fill="currentColor" stroke="none">A</text>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="saveCurrentHomeToVault()" title="Save Snapshot to Brainstorm Vault">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
           </svg>
         </button>
         <button class="icon-btn" onclick="openScreen('boardScreen')" title="Open Checklists Board">
@@ -700,8 +884,7 @@
         </button>
       </div>
 
-      <!-- Right Compose Button -->
-      <div class="circle-btn bottom-circle-btn liquid-glass" onclick="addHomeStickyNote('Quick Note ✨')" title="New Quick Note">
+      <div class="circle-btn bottom-circle-btn liquid-glass" onclick="addHomeStickyNote('Quick Idea ✨')" title="New Quick Note">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
         </svg>
@@ -710,7 +893,7 @@
   </section>
 
   <!-- =========================================================
-       SCREEN 2: ALL CHECKLISTS BOARD (Opened on Tapping Menu Option)
+       SCREEN 2: ALL CHECKLISTS BOARD
        ========================================================= -->
   <section id="boardScreen" class="screen dotted-grid">
     <div class="top-bar">
@@ -720,45 +903,44 @@
       <div class="liquid-glass" style="padding: 10px 18px; border-radius: 22px; font-weight: 700; font-size: 16px;">
         Checklists Board
       </div>
-      <div class="circle-btn liquid-glass" onclick="openMainMenu()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <div class="top-right-pill liquid-glass">
+        <button class="icon-btn" onclick="openShareAndBackupSheet()" title="Share & Backup">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        </button>
+        <button class="icon-btn" onclick="openMainMenu()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
       </div>
     </div>
 
     <div class="scroll-content">
-      <!-- Discardable Info Card explaining Left/Right Swipe gestures -->
       <div id="gestureInfoCard" class="info-tutorial-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
-          <span style="font-weight:700; font-size:15px; color:#007aff;">✨ Pro Gesture Tip: Menu Swipes</span>
+          <span style="font-weight:700; font-size:15px; color:#007aff;">✨ Gesture & Color-Coding Guide</span>
           <button onclick="dismissTutorialCard()" style="border:none; background:rgba(0,0,0,0.07); border-radius:12px; padding:4px 9px; font-size:12px; font-weight:600; cursor:pointer;">Dismiss ✕</button>
         </div>
-        <p style="margin:0 0 10px 0; font-size:13.5px; line-height:1.45; color:#3a3a3c;">
-          In the Main Menu, you can swipe the <strong>“To-Do Lists / Checklists”</strong> row to instantly create a specific checklist type:
-        </p>
-        <div style="display:flex; flex-direction:column; gap:6px; font-size:13px;">
-          <div>👉 <strong>Swipe Left → Right:</strong> Launches a <em>Quick Checklist</em> with live Day, Date & Last Edited stamp.</div>
-          <div>👈 <strong>Swipe Right → Left:</strong> Launches a <em>Spatial Canvas Checklist</em> with sticky notes & visual arrows pointing to items.</div>
-          <div>👆 <strong>Tap & Hold any item/card:</strong> Opens the iOS 27 Liquid Glass context menu & Creation Time info.</div>
+        <div style="display:flex; flex-direction:column; gap:6px; font-size:13px; color:#3a3a3c;">
+          <div>👉 <strong>Swipe Left → Right in Menu:</strong> Creates a <em>Quick Checklist</em> with Day, Date & Last Edited stamp.</div>
+          <div>👈 <strong>Swipe Right → Left in Menu:</strong> Creates an <em>Infinite Spatial Board</em> where you can add <strong>multiple moveable checklist boxes</strong> and sticky notes.</div>
+          <div>🎨 <strong>Color-Coded Arrows:</strong> Arrows pointing to the <strong>1st item</strong> are <span style="color:#007aff;font-weight:700;">Blue</span>, <strong>2nd item</strong> <span style="color:#28cd41;font-weight:700;">Green</span>, <strong>3rd item</strong> <span style="color:#ff3b30;font-weight:700;">Red</span>, <strong>4th item</strong> <span style="color:#ff9500;font-weight:700;">Orange</span>!</div>
         </div>
       </div>
 
-      <!-- Direct Creation Buttons for Both Checklist Types -->
       <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
-        <button onclick="createNewChecklist('quick')" class="liquid-glass" style="flex:1; min-width:160px; padding:14px; border-radius:18px; font-weight:600; font-size:14px; color:#007aff; cursor:pointer;">
+        <button onclick="createNewChecklist('quick')" class="liquid-glass" style="flex:1; min-width:160px; padding:14px; border-radius:18px; font-weight:700; font-size:14px; color:#007aff; cursor:pointer;">
           + New Quick Checklist
         </button>
-        <button onclick="createNewChecklist('spatial')" class="liquid-glass" style="flex:1; min-width:160px; padding:14px; border-radius:18px; font-weight:600; font-size:14px; color:#d97706; cursor:pointer;">
-          + New Spatial Arrow Checklist
+        <button onclick="createNewChecklist('spatial')" class="liquid-glass" style="flex:1; min-width:160px; padding:14px; border-radius:18px; font-weight:700; font-size:14px; color:#d97706; cursor:pointer;">
+          + New Spatial Board (Multi-Box)
         </button>
       </div>
 
-      <!-- Grid of All Created Checklists -->
       <div id="checklistsBoardGrid" class="board-grid"></div>
     </div>
   </section>
 
   <!-- =========================================================
-       SCREEN 3: QUICK CHECKLIST (Opened via Left-to-Right Swipe)
+       SCREEN 3: QUICK CHECKLIST (Left-to-Right Swipe)
        ========================================================= -->
   <section id="quickChecklistScreen" class="screen dotted-grid">
     <div class="top-bar">
@@ -767,11 +949,13 @@
       </div>
 
       <div class="top-right-pill liquid-glass">
-        <!-- Separate Info Button for Creation Timestamp -->
         <button class="icon-btn" onclick="showChecklistCreationInfo()" title="View Creation Time Info">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2.2">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
+        </button>
+        <button class="icon-btn" onclick="openShareAndBackupSheet()" title="Save & Share">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
         </button>
         <button class="icon-btn" onclick="addQuickChecklistItem()" title="Add Item">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -780,41 +964,38 @@
     </div>
 
     <div class="scroll-content">
-      <!-- Day, Date, and Last Edited Header -->
       <div class="timestamp-banner liquid-glass">
         <div>
           <div id="quickDayDateText" style="font-weight:700; font-size:15px; color:#1c1c1e;"></div>
           <div id="quickLastEditedText" style="font-size:12px; color:#6e6e73; margin-top:2px;"></div>
         </div>
-        <button onclick="showChecklistCreationInfo()" style="border:none; background:rgba(0,122,255,0.12); color:#007aff; padding:6px 12px; border-radius:14px; font-size:12px; font-weight:600; cursor:pointer;">
+        <button onclick="showChecklistCreationInfo()" style="border:none; background:rgba(0,122,255,0.12); color:#007aff; padding:6px 12px; border-radius:14px; font-size:12px; font-weight:700; cursor:pointer;">
           ⓘ Creation Info
         </button>
       </div>
 
-      <!-- Editable Checklist Title -->
       <input id="quickChecklistTitle" type="text" oninput="updateCurrentChecklistTitle(this.value)"
         style="width:100%; border:none; background:transparent; font-size:28px; font-weight:800; margin-bottom:16px; outline:none;"
         placeholder="Checklist Title..." />
 
-      <!-- Checklist Items List -->
       <div id="quickItemsContainer"></div>
 
-      <button onclick="addQuickChecklistItem()" class="liquid-glass" style="width:100%; padding:14px; border-radius:16px; font-weight:600; color:#007aff; margin-top:8px; cursor:pointer;">
+      <button onclick="addQuickChecklistItem()" class="liquid-glass" style="width:100%; padding:14px; border-radius:16px; font-weight:700; color:#007aff; margin-top:8px; cursor:pointer;">
         + Add Checklist Item
       </button>
     </div>
   </section>
 
   <!-- =========================================================
-       SCREEN 4: SPATIAL CANVAS CHECKLIST (Right-to-Left Swipe, Image 2)
+       SCREEN 4: INFINITE SPATIAL CANVAS CHECKLIST (Multi-Box + Color Arrows)
        ========================================================= -->
-  <section id="spatialChecklistScreen" class="screen dotted-grid">
+  <section id="spatialChecklistScreen" class="screen">
     <div class="top-bar">
       <div class="circle-btn liquid-glass" onclick="openScreen('boardScreen')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg>
       </div>
 
-      <div class="liquid-glass" style="padding:6px 14px; border-radius:18px; font-size:12px; font-weight:600;" id="spatialTopStamp"></div>
+      <div class="liquid-glass" style="padding:7px 14px; border-radius:18px; font-size:12px; font-weight:700; max-width:48vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="spatialTopStamp"></div>
 
       <div class="top-right-pill liquid-glass">
         <button class="icon-btn" onclick="showChecklistCreationInfo()" title="Creation Timestamp Info">
@@ -822,33 +1003,36 @@
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
         </button>
-        <button class="icon-btn" onclick="addSpatialStickyNote()" title="Add Sticky Note with Arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2">
-            <rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+        <button class="icon-btn" onclick="openShareAndBackupSheet()" title="Save & Share">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        </button>
+        <button class="icon-btn" onclick="addSpatialChecklistBox()" title="Insert Another Checklist Box on Board">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2.3">
+            <rect x="3" y="3" width="18" height="18" rx="4"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
           </svg>
         </button>
       </div>
     </div>
 
-    <!-- Spatial Workspace: Freehand Canvas + SVG Curved Arrows + Sticky Notes + Checklist Box -->
-    <div id="spatialCanvasArea" class="canvas-area">
-      <canvas id="spatialDrawingCanvas" class="drawing-layer"></canvas>
-
-      <!-- SVG Arrow Layer for pointing from Sticky Notes to Checklist Items (Matches Image 2) -->
-      <svg id="spatialArrowSvg" class="arrow-layer"></svg>
-
-      <!-- Floating Sticky Notes Layer -->
-      <div id="spatialStickiesLayer"></div>
-
-      <!-- Spatial Checklist Box (Matches Image 2 bottom list) -->
-      <div id="spatialChecklistBox" class="spatial-checklist-box">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <input id="spatialTitleInput" type="text" oninput="updateCurrentChecklistTitle(this.value)"
-            style="border:none; background:transparent; font-size:15px; font-weight:700; color:#6e6e73; outline:none; width:190px;" />
-          <button onclick="addSpatialChecklistItem()" style="border:none; background:rgba(0,122,255,0.12); color:#007aff; border-radius:10px; padding:4px 9px; font-size:12px; font-weight:700; cursor:pointer;">+ Item</button>
-        </div>
-        <div id="spatialItemsList"></div>
+    <!-- Infinite Spatial Viewport -->
+    <div id="spatialViewport" class="canvas-viewport dotted-grid">
+      <div id="spatialWorld" class="world-plane">
+        <!-- Layer 1: Freehand Ink -->
+        <svg id="spatialInkSvg" class="ink-layer"></svg>
+        <!-- Layer 2: Moveable Checklist Boxes (Z-Index 25) -->
+        <div id="spatialBoxesLayer"></div>
+        <!-- Layer 3: Moveable Sticky Notes (Z-Index 35) -->
+        <div id="spatialStickiesLayer"></div>
+        <!-- Layer 4: TOP-LEVEL HIGH-VISIBILITY COLOR-CODED ARROWS (Z-Index 85) -->
+        <svg id="spatialArrowSvg" class="arrow-layer"></svg>
       </div>
+    </div>
+
+    <!-- Floating Zoom Pill for Spatial Board -->
+    <div class="zoom-pill liquid-glass">
+      <button class="zoom-btn" onclick="stepZoom('spatial', -0.2)">−</button>
+      <span id="spatialZoomLabel" onclick="resetViewport('spatial')" style="padding:0 6px; cursor:pointer;">100%</span>
+      <button class="zoom-btn" onclick="stepZoom('spatial', 0.2)">+</button>
     </div>
 
     <!-- Bottom Floating Bar for Spatial Screen -->
@@ -858,7 +1042,7 @@
       </div>
 
       <div class="center-tool-pill liquid-glass">
-        <button id="spatialPenBtn" class="icon-btn" onclick="toggleSpatialDrawing()" title="Draw on Spatial Grid">
+        <button id="spatialPenBtn" class="icon-btn" onclick="toggleSpatialDrawing()" title="Draw Freehand on Grid">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
             <circle cx="12" cy="12" r="9"/><path d="m9 17 3-8 3 8"/><path d="M10 14h4"/>
           </svg>
@@ -869,37 +1053,36 @@
             <text x="8.5" y="15" font-size="10" font-weight="bold" fill="currentColor" stroke="none">A</text>
           </svg>
         </button>
-        <button class="icon-btn" onclick="addSpatialChecklistItem()" title="Add Checklist Item">
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1.5"/><circle cx="4" cy="12" r="1.5"/><circle cx="4" cy="18" r="1.5"/></svg>
+        <button class="icon-btn" onclick="addSpatialChecklistBox()" title="Insert New Moveable Checklist Box" style="width:auto; padding:0 10px; font-size:12px; font-weight:700; color:#007aff;">
+          + Checklist Box
         </button>
       </div>
 
-      <div class="circle-btn bottom-circle-btn liquid-glass" onclick="addSpatialStickyNote()">
+      <div class="circle-btn bottom-circle-btn liquid-glass" onclick="addSpatialStickyNote()" title="New Sticky Note">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       </div>
     </div>
   </section>
 
   <!-- =========================================================
-       MAIN MENU DRAWER WITH SWIPEABLE "TO-DO LISTS / CHECKLISTS"
+       MAIN MENU DRAWER
        ========================================================= -->
   <div id="mainMenuOverlay" class="menu-overlay" onclick="if(event.target===this) closeMainMenu()">
     <div class="menu-sheet">
-      <div class="sheet-Grabber"></div>
+      <div class="sheet-grabber"></div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
         <span style="font-size:20px; font-weight:800;">Daily Driver Hub</span>
-        <span style="font-size:12px; color:#6e6e73; font-weight:600;">iOS 27 Liquid Glass</span>
+        <span style="font-size:12px; color:#007aff; font-weight:700;">iOS 27 Liquid Glass</span>
       </div>
 
-      <div style="font-size:12px; color:#6e6e73; margin-bottom:8px; font-weight:600;">
-        SWIPE LEFT/RIGHT OR TAP BELOW:
+      <div style="font-size:11.5px; color:#6e6e73; margin-bottom:8px; font-weight:700;">
+        SWIPE LEFT / RIGHT OR TAP:
       </div>
 
-      <!-- Gesture-Driven To-Do Lists / Checklists Option -->
       <div class="swipe-menu-container">
         <div class="swipe-bg-labels">
           <span>→ Quick Checklist</span>
-          <span>Spatial Canvas ←</span>
+          <span>Spatial Multi-Box ←</span>
         </div>
         <div id="todoSwipeCard" class="swipe-item-card">
           <div style="display:flex; align-items:center; gap:12px;">
@@ -908,33 +1091,59 @@
             </div>
             <div>
               <div style="font-weight:700; font-size:16px;">To-Do Lists / Checklists</div>
-              <div style="font-size:11.5px; color:#6e6e73;">Tap: All Lists • Swipe → Quick • Swipe ← Spatial</div>
+              <div style="font-size:11.5px; color:#6e6e73;">Tap: Board • Swipe → Quick • Swipe ← Spatial</div>
             </div>
           </div>
-          <span style="font-size:13px; color:#8e8e93; font-weight:600;">⇄</span>
+          <span style="font-size:14px; color:#8e8e93; font-weight:700;">⇄</span>
         </div>
       </div>
 
-      <!-- Quick Brainstorm Canvas Option -->
       <div class="menu-row-secondary" onclick="closeMainMenu(); openScreen('homeScreen');">
-        <span style="font-weight:600; font-size:15px;">📝 Quick Notes Brainstorm Grid</span>
-        <span style="font-size:12px; color:#007aff; font-weight:600;">Home</span>
+        <span style="font-weight:600; font-size:15px;">📝 Infinite Brainstorm Canvas</span>
+        <span style="font-size:12px; color:#007aff; font-weight:700;">Home</span>
       </div>
 
-      <!-- Upcoming v2 Daily Driver Modules -->
-      <div class="menu-row-secondary" style="opacity:0.65;" onclick="showToast('Daily Expenses module coming in v1.1')">
-        <span style="font-weight:600; font-size:15px;">💳 Daily Expenses Tracker</span>
-        <span class="badge badge-quick">Soon</span>
+      <div class="menu-row-secondary" onclick="closeMainMenu(); openVaultModal();">
+        <span style="font-weight:600; font-size:15px;">🗂️ Saved Brainstorm Vault</span>
+        <span id="menuVaultBadge" class="badge badge-quick">0 Saved</span>
       </div>
-      <div class="menu-row-secondary" style="opacity:0.65;" onclick="showToast('Meal & Diet Planner coming in v1.1')">
-        <span style="font-weight:600; font-size:15px;">🥗 Meal & Diet Plans</span>
-        <span class="badge badge-quick">Soon</span>
+
+      <div class="menu-row-secondary" onclick="closeMainMenu(); openShareAndBackupSheet();">
+        <span style="font-weight:600; font-size:15px;">📤 Save, Backup & iPhone Share</span>
+        <span class="badge badge-spatial">Local + Export</span>
       </div>
     </div>
   </div>
 
   <!-- =========================================================
-       iOS 27 TAP-AND-HOLD CONTEXT MENU / CREATION INFO MODAL
+       BRAINSTORM VAULT DRAWER (Salient Place for Saved Home Notes)
+       ========================================================= -->
+  <div id="vaultOverlay" class="menu-overlay" onclick="if(event.target===this) closeVaultModal()">
+    <div class="menu-sheet">
+      <div class="sheet-grabber"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div>
+          <div style="font-size:20px; font-weight:800;">🗂️ Brainstorm & Notes Vault</div>
+          <div style="font-size:12px; color:#6e6e73;">Your active Home canvas auto-saves continuously. Save snapshots here:</div>
+        </div>
+        <button onclick="closeVaultModal()" style="border:none; background:rgba(0,0,0,0.07); border-radius:14px; padding:6px 11px; font-weight:700; cursor:pointer;">Done</button>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-bottom:16px;">
+        <button onclick="saveCurrentHomeToVault()" class="liquid-glass" style="flex:1; padding:12px; border-radius:16px; font-weight:700; color:#007aff; cursor:pointer;">
+          + Save Current Home Canvas Snapshot
+        </button>
+        <button onclick="clearHomeCanvas()" class="liquid-glass" style="padding:12px 14px; border-radius:16px; font-weight:700; color:#ff3b30; cursor:pointer;">
+          New Blank
+        </button>
+      </div>
+
+      <div id="vaultListContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       CONTEXT MENU / SHARE & BACKUP MODAL
        ========================================================= -->
   <div id="contextMenuBackdrop" class="context-menu-backdrop" onclick="if(event.target===this) closeContextMenu()">
     <div class="context-menu-box">
@@ -945,31 +1154,85 @@
 
   <script>
     /********************************************************************
-     * 1. STATE & PERSISTENCE (With Default Image 2 Example Pre-loaded)
+     * 1. COLOR PALETTE FOR ITEM-ORDER ARROWS (1st=Blue, 2nd=Green, 3rd=Red...)
      ********************************************************************/
-    const STORAGE_KEY = 'daily_driver_pwa_v1';
+    const ITEM_ARROW_COLORS = [
+      '#007aff', // 1st item -> Blue
+      '#28cd41', // 2nd item -> Green
+      '#ff3b30', // 3rd item -> Red
+      '#ff9500', // 4th item -> Orange
+      '#af52de', // 5th item -> Purple
+      '#00c7be', // 6th item -> Teal
+      '#ff2d55'  // 7th item -> Pink
+    ];
+
+    function getArrowColorByIndex(idx) {
+      return ITEM_ARROW_COLORS[idx % ITEM_ARROW_COLORS.length];
+    }
+
+    /********************************************************************
+     * 2. STATE & AUTOMATIC MIGRATION (Preserves v1 Data + Adds Multi-Box)
+     ********************************************************************/
+    const STORAGE_KEY = 'daily_driver_pwa_v2';
 
     const defaultState = {
       tutorialDismissed: false,
-      homeStickies: [],
+      homeCanvas: {
+        panX: 0,
+        panY: 0,
+        zoom: 1,
+        strokes: [],
+        stickies: [
+          {
+            id: 'home-welcome-note',
+            x: 65,
+            y: 110,
+            text: 'Welcome! Drag empty space to pan infinitely, pinch or use +/- to zoom, or save snapshots to the Brainstorm Vault 🗂️'
+          }
+        ]
+      },
+      brainstormVault: [
+        {
+          id: 'vault-demo-1',
+          title: 'Initial App Concept Ideas',
+          savedAt: new Date(Date.now() - 3600 * 1000 * 12).toISOString(),
+          stickies: [
+            { id: 'v-s1', x: 70, y: 120, text: 'Build offline-first iOS 27 Liquid Glass daily driver app' }
+          ],
+          strokes: []
+        }
+      ],
       checklists: [
         {
           id: 'demo-spatial-1',
           type: 'spatial',
-          title: 'Evening Routine',
+          title: 'Evening & Study Routine',
           createdAt: new Date(Date.now() - 3600 * 1000 * 5).toISOString(),
           updatedAt: new Date().toISOString(),
-          items: [
-            { id: 'item-trash', text: 'Take out trash', checked: false },
-            { id: 'item-dinner', text: 'Make dinner.', checked: false }
+          panX: 0,
+          panY: 0,
+          zoom: 1,
+          strokes: [],
+          boxes: [
+            {
+              id: 'box-main-1',
+              title: 'Home Tasks',
+              x: 28,
+              y: 365,
+              items: [
+                { id: 'item-trash', text: 'Take out trash', checked: false },
+                { id: 'item-dinner', text: 'Make dinner.', checked: false },
+                { id: 'item-pack', text: 'Pack bag for tomorrow', checked: false }
+              ]
+            }
           ],
           stickies: [
             {
               id: 'sticky-trash-note',
-              x: 92,
-              y: 120,
+              x: 78,
+              y: 95,
               text: 'Take out trash\nbefore 5,\notherwise the\ncollection truck\nwill leave.',
-              targetItemIds: ['item-trash']
+              targetItemIds: ['item-trash', 'item-dinner']
             }
           ]
         },
@@ -981,50 +1244,72 @@
           updatedAt: new Date().toISOString(),
           items: [
             { id: 'q-1', text: 'Review morning brainstorm notes', checked: true },
-            { id: 'q-2', text: 'Hydrate 2L water', checked: false },
+            { id: 'q-2', text: 'Complete 2 hours focused prep', checked: false },
             { id: 'q-3', text: 'Plan tomorrow priorities', checked: false }
-          ],
-          stickies: []
+          ]
         }
       ]
     };
 
     let state = loadState();
-    let activeChecklistId = state.checklists[0].id;
+    let activeChecklistId = state.checklists[0]?.id || null;
     let activeLinkingStickyId = null;
     let selectedStickyId = 'sticky-trash-note';
 
     function loadState() {
       try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? JSON.parse(saved) : defaultState;
+        const rawV2 = localStorage.getItem(STORAGE_KEY);
+        const rawV1 = localStorage.getItem('daily_driver_pwa_v1');
+        let parsed = rawV2 ? JSON.parse(rawV2) : (rawV1 ? JSON.parse(rawV1) : defaultState);
+
+        // Ensure Home Canvas & Vault exist
+        if (!parsed.homeCanvas) {
+          parsed.homeCanvas = JSON.parse(JSON.stringify(defaultState.homeCanvas));
+        }
+        if (!parsed.brainstormVault) {
+          parsed.brainstormVault = JSON.parse(JSON.stringify(defaultState.brainstormVault));
+        }
+
+        // Migrate any single-box spatial checklists to multi-box format
+        (parsed.checklists || []).forEach(list => {
+          if (list.type === 'spatial' && !list.boxes) {
+            list.boxes = [
+              {
+                id: 'box-' + list.id,
+                title: list.title || 'Checklist',
+                x: 28,
+                y: 365,
+                items: list.items || []
+              }
+            ];
+            list.panX = list.panX || 0;
+            list.panY = list.panY || 0;
+            list.zoom = list.zoom || 1;
+            list.strokes = list.strokes || [];
+          }
+        });
+        return parsed;
       } catch (e) {
-        return defaultState;
+        return JSON.parse(JSON.stringify(defaultState));
       }
     }
 
     function saveState() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        updateVaultBadges();
       } catch (e) {}
     }
 
-    function formatDayDate(isoString) {
-      const d = new Date(isoString);
-      return d.toLocaleDateString(undefined, {
-        weekday: 'long',
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
+    function formatDayDate(iso) {
+      return new Date(iso).toLocaleDateString(undefined, {
+        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
       });
     }
 
-    function formatTime(isoString) {
-      const d = new Date(isoString);
-      return d.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
+    function formatTime(iso) {
+      return new Date(iso).toLocaleTimeString(undefined, {
+        hour: '2-digit', minute: '2-digit'
       });
     }
 
@@ -1039,21 +1324,250 @@
     }
 
     /********************************************************************
-     * 2. SCREEN NAVIGATION
+     * 3. INFINITE CANVAS PAN & PINCH-TO-ZOOM ENGINE
+     ********************************************************************/
+    const viewports = {
+      home: {
+        getObj: () => state.homeCanvas,
+        viewportEl: () => document.getElementById('homeViewport'),
+        worldEl: () => document.getElementById('homeWorld'),
+        labelEl: () => document.getElementById('homeZoomLabel'),
+        isDrawing: () => homeDrawingMode
+      },
+      spatial: {
+        getObj: () => getCurrentChecklist() || { panX: 0, panY: 0, zoom: 1 },
+        viewportEl: () => document.getElementById('spatialViewport'),
+        worldEl: () => document.getElementById('spatialWorld'),
+        labelEl: () => document.getElementById('spatialZoomLabel'),
+        isDrawing: () => spatialDrawingMode
+      }
+    };
+
+    function applyViewportTransform(key, smooth = false) {
+      const cfg = viewports[key];
+      const obj = cfg.getObj();
+      if (!obj) return;
+      obj.panX = obj.panX || 0;
+      obj.panY = obj.panY || 0;
+      obj.zoom = obj.zoom || 1;
+
+      const world = cfg.worldEl();
+      const vp = cfg.viewportEl();
+      const label = cfg.labelEl();
+
+      if (smooth) {
+        world.classList.add('smooth-zoom');
+        clearTimeout(world._zTimer);
+        world._zTimer = setTimeout(() => world.classList.remove('smooth-zoom'), 280);
+      }
+
+      world.style.transform = `translate3d(${obj.panX}px, ${obj.panY}px, 0) scale(${obj.zoom})`;
+
+      // Scale and shift the infinite dotted grid in sync
+      const gridSize = 24 * obj.zoom;
+      vp.style.backgroundSize = `${gridSize}px ${gridSize}px`;
+      vp.style.backgroundPosition = `${obj.panX}px ${obj.panY}px`;
+
+      if (label) label.textContent = `${Math.round(obj.zoom * 100)}%`;
+    }
+
+    function stepZoom(key, delta) {
+      const cfg = viewports[key];
+      const obj = cfg.getObj();
+      const oldZoom = obj.zoom || 1;
+      const newZoom = Math.max(0.35, Math.min(2.5, +(oldZoom + delta).toFixed(2)));
+
+      // Zoom relative to screen center
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      obj.panX = cx - ((cx - (obj.panX || 0)) / oldZoom) * newZoom;
+      obj.panY = cy - ((cy - (obj.panY || 0)) / oldZoom) * newZoom;
+      obj.zoom = newZoom;
+
+      applyViewportTransform(key, true);
+      saveState();
+    }
+
+    function resetViewport(key) {
+      const obj = viewports[key].getObj();
+      obj.panX = 0;
+      obj.panY = 0;
+      obj.zoom = 1;
+      applyViewportTransform(key, true);
+      saveState();
+      showToast('Canvas View Reset to 100%');
+    }
+
+    function screenToWorld(key, clientX, clientY) {
+      const cfg = viewports[key];
+      const obj = cfg.getObj();
+      const rect = cfg.viewportEl().getBoundingClientRect();
+      return {
+        x: (clientX - rect.left - (obj.panX || 0)) / (obj.zoom || 1),
+        y: (clientY - rect.top - (obj.panY || 0)) / (obj.zoom || 1)
+      };
+    }
+
+    function setupInfiniteViewportInteractions(key) {
+      const cfg = viewports[key];
+      const vp = cfg.viewportEl();
+      let isPanning = false;
+      let startX = 0, startY = 0, origPanX = 0, origPanY = 0;
+      let initialPinchDist = null;
+      let initialZoom = 1;
+      let pinchCenterWorld = null;
+      let currentStroke = null;
+
+      function getTouchDist(t1, t2) {
+        return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      }
+
+      vp.addEventListener('touchstart', e => {
+        if (e.target.closest('.sticky-note, .spatial-checklist-box')) return;
+
+        const obj = cfg.getObj();
+        if (e.touches.length === 2) {
+          isPanning = false;
+          initialPinchDist = getTouchDist(e.touches[0], e.touches[1]);
+          initialZoom = obj.zoom || 1;
+          const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          pinchCenterWorld = screenToWorld(key, midX, midY);
+          return;
+        }
+
+        if (cfg.isDrawing()) {
+          const pt = screenToWorld(key, e.touches[0].clientX, e.touches[0].clientY);
+          currentStroke = [pt];
+          obj.strokes = obj.strokes || [];
+          obj.strokes.push(currentStroke);
+          renderInkLayer(key);
+          return;
+        }
+
+        isPanning = true;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        origPanX = obj.panX || 0;
+        origPanY = obj.panY || 0;
+      }, { passive: true });
+
+      vp.addEventListener('touchmove', e => {
+        const obj = cfg.getObj();
+        if (e.touches.length === 2 && initialPinchDist) {
+          const dist = getTouchDist(e.touches[0], e.touches[1]);
+          const newZoom = Math.max(0.35, Math.min(2.5, initialZoom * (dist / initialPinchDist)));
+          const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          obj.zoom = newZoom;
+          obj.panX = midX - pinchCenterWorld.x * newZoom;
+          obj.panY = midY - pinchCenterWorld.y * newZoom;
+          applyViewportTransform(key, false);
+          return;
+        }
+
+        if (cfg.isDrawing() && currentStroke && e.touches.length === 1) {
+          const pt = screenToWorld(key, e.touches[0].clientX, e.touches[0].clientY);
+          currentStroke.push(pt);
+          renderInkLayer(key);
+          return;
+        }
+
+        if (!isPanning || e.touches.length !== 1) return;
+        obj.panX = origPanX + (e.touches[0].clientX - startX);
+        obj.panY = origPanY + (e.touches[0].clientY - startY);
+        applyViewportTransform(key, false);
+      }, { passive: true });
+
+      vp.addEventListener('touchend', () => {
+        if (isPanning || initialPinchDist || currentStroke) {
+          isPanning = false;
+          initialPinchDist = null;
+          currentStroke = null;
+          saveState();
+        }
+      });
+
+      // Desktop Mouse Pan + Wheel Zoom Support
+      vp.addEventListener('mousedown', e => {
+        if (e.target.closest('.sticky-note, .spatial-checklist-box')) return;
+        const obj = cfg.getObj();
+        if (cfg.isDrawing()) {
+          const pt = screenToWorld(key, e.clientX, e.clientY);
+          currentStroke = [pt];
+          obj.strokes = obj.strokes || [];
+          obj.strokes.push(currentStroke);
+          renderInkLayer(key);
+          return;
+        }
+        isPanning = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        origPanX = obj.panX || 0;
+        origPanY = obj.panY || 0;
+      });
+
+      window.addEventListener('mousemove', e => {
+        const obj = cfg.getObj();
+        if (cfg.isDrawing() && currentStroke) {
+          currentStroke.push(screenToWorld(key, e.clientX, e.clientY));
+          renderInkLayer(key);
+          return;
+        }
+        if (!isPanning) return;
+        obj.panX = origPanX + (e.clientX - startX);
+        obj.panY = origPanY + (e.clientY - startY);
+        applyViewportTransform(key, false);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isPanning || currentStroke) {
+          isPanning = false;
+          currentStroke = null;
+          saveState();
+        }
+      });
+
+      vp.addEventListener('wheel', e => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.12 : -0.12;
+        stepZoom(key, delta);
+      }, { passive: false });
+    }
+
+    function renderInkLayer(key) {
+      const svg = document.getElementById(key === 'home' ? 'homeInkSvg' : 'spatialInkSvg');
+      const obj = viewports[key].getObj();
+      if (!svg || !obj) return;
+      const offset = 4000;
+      svg.innerHTML = (obj.strokes || []).map(stroke => {
+        if (stroke.length < 2) return '';
+        const d = stroke.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x + offset} ${p.y + offset}`).join(' ');
+        return `<path d="${d}" fill="none" stroke="#007aff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+      }).join('');
+    }
+
+    /********************************************************************
+     * 4. SCREEN NAVIGATION & MENU SWIPE
      ********************************************************************/
     function openScreen(screenId) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
 
-      if (screenId === 'boardScreen') renderBoardScreen();
-      if (screenId === 'quickChecklistScreen') renderQuickChecklist();
-      if (screenId === 'spatialChecklistScreen') {
+      if (screenId === 'homeScreen') {
+        renderHomeScreen();
+      } else if (screenId === 'boardScreen') {
+        renderBoardScreen();
+      } else if (screenId === 'quickChecklistScreen') {
+        renderQuickChecklist();
+      } else if (screenId === 'spatialChecklistScreen') {
         renderSpatialChecklist();
-        setTimeout(drawSpatialArrows, 40);
+        requestAnimationFrame(drawSpatialArrows);
       }
     }
 
     function openMainMenu() {
+      updateVaultBadges();
       document.getElementById('mainMenuOverlay').classList.add('open');
     }
 
@@ -1061,32 +1575,20 @@
       document.getElementById('mainMenuOverlay').classList.remove('open');
     }
 
-    /********************************************************************
-     * 3. 3-WAY GESTURE HANDLER ON "TO-DO LISTS / CHECKLISTS" MENU ITEM
-     *    - Swipe Left -> Right : Quick Checklist
-     *    - Swipe Right -> Left : Spatial Canvas Checklist
-     *    - Tap                 : Checklists Board
-     ********************************************************************/
     (function setupMenuSwipeGesture() {
       const card = document.getElementById('todoSwipeCard');
-      let startX = 0;
-      let currentX = 0;
-      let isDragging = false;
+      let startX = 0, currentX = 0, isDragging = false;
 
-      function onStart(clientX) {
-        startX = clientX;
-        currentX = clientX;
-        isDragging = true;
+      function onStart(x) {
+        startX = x; currentX = x; isDragging = true;
         card.classList.add('dragging');
       }
-
-      function onMove(clientX) {
+      function onMove(x) {
         if (!isDragging) return;
-        currentX = clientX;
+        currentX = x;
         const dx = Math.max(-140, Math.min(140, currentX - startX));
         card.style.transform = `translateX(${dx}px)`;
       }
-
       function onEnd() {
         if (!isDragging) return;
         isDragging = false;
@@ -1095,17 +1597,14 @@
         card.style.transform = 'translateX(0px)';
 
         if (dx > 70) {
-          // Left-to-Right Swipe -> Quick Checklist
           closeMainMenu();
           createNewChecklist('quick');
           showToast('→ Created Quick Checklist');
         } else if (dx < -70) {
-          // Right-to-Left Swipe -> Spatial Canvas Checklist
           closeMainMenu();
           createNewChecklist('spatial');
-          showToast('← Created Spatial Canvas Checklist');
+          showToast('← Created Spatial Multi-Box Board');
         } else if (Math.abs(dx) < 12) {
-          // Tap -> Open Checklists Board
           closeMainMenu();
           openScreen('boardScreen');
         }
@@ -1114,14 +1613,183 @@
       card.addEventListener('touchstart', e => onStart(e.touches[0].clientX), { passive: true });
       card.addEventListener('touchmove', e => onMove(e.touches[0].clientX), { passive: true });
       card.addEventListener('touchend', onEnd);
-
       card.addEventListener('mousedown', e => onStart(e.clientX));
       window.addEventListener('mousemove', e => onMove(e.clientX));
       window.addEventListener('mouseup', onEnd);
     })();
 
     /********************************************************************
-     * 4. CHECKLISTS BOARD & CREATION
+     * 5. HOME SCREEN & SALIENT BRAINSTORM VAULT
+     ********************************************************************/
+    let homeDrawingMode = false;
+    let spatialDrawingMode = false;
+
+    function renderHomeScreen() {
+      applyViewportTransform('home', false);
+      renderInkLayer('home');
+      updateVaultBadges();
+
+      const container = document.getElementById('homeStickyContainer');
+      container.innerHTML = '';
+
+      (state.homeCanvas.stickies || []).forEach(sticky => {
+        const el = document.createElement('div');
+        el.className = 'sticky-note selected';
+        el.style.left = sticky.x + 'px';
+        el.style.top = sticky.y + 'px';
+        el.innerHTML = `
+          <div class="sticky-drag-bar">⠿ DRAG NOTE</div>
+          <div class="handle-dot handle-tl"></div><div class="handle-dot handle-tc"></div><div class="handle-dot handle-tr"></div>
+          <div class="handle-dot handle-ml"></div><div class="handle-dot handle-mr"></div>
+          <div class="handle-dot handle-bl"></div><div class="handle-dot handle-bc"></div><div class="handle-dot handle-br"></div>
+          <div class="sticky-content" contenteditable="true">${sticky.text.replace(/\n/g, '<br>')}</div>
+          <div class="sticky-actions">
+            <span style="color:#666;font-weight:600;">Auto-saved</span>
+            <button class="point-btn" onclick="deleteHomeSticky('${sticky.id}')">✕</button>
+          </div>
+        `;
+
+        const contentEl = el.querySelector('.sticky-content');
+        contentEl.addEventListener('input', () => {
+          sticky.text = contentEl.innerText;
+          saveState();
+        });
+
+        makeWorldDraggable(el, sticky, 'home', null);
+        container.appendChild(el);
+      });
+    }
+
+    function addHomeStickyNote(initialText) {
+      const vp = state.homeCanvas;
+      const centerWorld = screenToWorld('home', window.innerWidth / 2 - 90, window.innerHeight / 2 - 90);
+      vp.stickies.push({
+        id: 'hst-' + Date.now(),
+        x: Math.round(centerWorld.x + (Math.random() * 40 - 20)),
+        y: Math.round(centerWorld.y + (Math.random() * 40 - 20)),
+        text: initialText
+      });
+      saveState();
+      renderHomeScreen();
+      showToast('Added Note to Canvas');
+    }
+
+    function deleteHomeSticky(id) {
+      state.homeCanvas.stickies = state.homeCanvas.stickies.filter(s => s.id !== id);
+      saveState();
+      renderHomeScreen();
+    }
+
+    function undoHomeStroke() {
+      (state.homeCanvas.strokes || []).pop();
+      saveState();
+      renderInkLayer('home');
+      showToast('Undid Stroke');
+    }
+
+    function toggleHomeDrawing() {
+      homeDrawingMode = !homeDrawingMode;
+      document.getElementById('homePenBtn').classList.toggle('active-tool', homeDrawingMode);
+      showToast(homeDrawingMode ? 'Freehand Pen Active' : 'Pan & Move Mode Active');
+    }
+
+    function updateVaultBadges() {
+      const count = (state.brainstormVault || []).length;
+      const b1 = document.getElementById('homeVaultCount');
+      const b2 = document.getElementById('menuVaultBadge');
+      if (b1) b1.textContent = count;
+      if (b2) b2.textContent = `${count} Saved`;
+    }
+
+    function openVaultModal() {
+      renderVaultList();
+      document.getElementById('vaultOverlay').classList.add('open');
+    }
+
+    function closeVaultModal() {
+      document.getElementById('vaultOverlay').classList.remove('open');
+    }
+
+    function saveCurrentHomeToVault() {
+      const defaultTitle = `Brainstorm — ${formatDayDate(new Date().toISOString())} (${formatTime(new Date().toISOString())})`;
+      const snapshot = {
+        id: 'vault-' + Date.now(),
+        title: defaultTitle,
+        savedAt: new Date().toISOString(),
+        stickies: JSON.parse(JSON.stringify(state.homeCanvas.stickies || [])),
+        strokes: JSON.parse(JSON.stringify(state.homeCanvas.strokes || []))
+      };
+      state.brainstormVault.unshift(snapshot);
+      saveState();
+      renderVaultList();
+      showToast('Saved Snapshot to Brainstorm Vault 🗂️');
+    }
+
+    function clearHomeCanvas() {
+      state.homeCanvas.stickies = [];
+      state.homeCanvas.strokes = [];
+      resetViewport('home');
+      renderHomeScreen();
+      closeVaultModal();
+      showToast('Started Fresh Home Canvas');
+    }
+
+    function renderVaultList() {
+      const container = document.getElementById('vaultListContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!state.brainstormVault.length) {
+        container.innerHTML = `<div style="padding:20px; text-align:center; color:#6e6e73;">No saved snapshots yet. Tap "+ Save Current Home Canvas Snapshot" above!</div>`;
+        return;
+      }
+
+      state.brainstormVault.forEach(entry => {
+        const previewText = (entry.stickies || []).map(s => s.text).join(' • ') || 'Freehand sketch session';
+        const card = document.createElement('div');
+        card.className = 'liquid-glass';
+        card.style.cssText = 'padding:14px 16px; border-radius:18px; display:flex; justify-content:space-between; align-items:center; gap:12px;';
+        card.innerHTML = `
+          <div style="flex:1; min-width:0;">
+            <input type="text" value="${entry.title}" onchange="renameVaultItem('${entry.id}', this.value)"
+              style="border:none; background:transparent; font-weight:700; font-size:15px; width:100%; outline:none;" />
+            <div style="font-size:12px; color:#6e6e73; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">
+              ${(entry.stickies || []).length} notes, ${(entry.strokes || []).length} strokes — ${previewText}
+            </div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button onclick="loadVaultSnapshot('${entry.id}')" style="border:none; background:#007aff; color:#fff; border-radius:12px; padding:7px 12px; font-size:12px; font-weight:700; cursor:pointer;">Load</button>
+            <button onclick="deleteVaultSnapshot('${entry.id}')" style="border:none; background:rgba(255,59,48,0.12); color:#ff3b30; border-radius:12px; padding:7px 10px; font-size:12px; font-weight:700; cursor:pointer;">✕</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renameVaultItem(id, newTitle) {
+      const item = state.brainstormVault.find(v => v.id === id);
+      if (item) { item.title = newTitle; saveState(); }
+    }
+
+    function loadVaultSnapshot(id) {
+      const item = state.brainstormVault.find(v => v.id === id);
+      if (!item) return;
+      state.homeCanvas.stickies = JSON.parse(JSON.stringify(item.stickies || []));
+      state.homeCanvas.strokes = JSON.parse(JSON.stringify(item.strokes || []));
+      saveState();
+      closeVaultModal();
+      openScreen('homeScreen');
+      showToast('Loaded Brainstorm Snapshot ✓');
+    }
+
+    function deleteVaultSnapshot(id) {
+      state.brainstormVault = state.brainstormVault.filter(v => v.id !== id);
+      saveState();
+      renderVaultList();
+    }
+
+    /********************************************************************
+     * 6. CHECKLISTS BOARD & QUICK CHECKLIST
      ********************************************************************/
     function dismissTutorialCard() {
       state.tutorialDismissed = true;
@@ -1131,23 +1799,42 @@
 
     function createNewChecklist(type) {
       const now = new Date().toISOString();
+      const firstItemId = 'item-' + Date.now() + '-1';
+      const secondItemId = 'item-' + Date.now() + '-2';
+
       const newList = {
         id: 'list-' + Date.now(),
         type,
-        title: type === 'quick' ? 'Quick Checklist' : 'Spatial Visual Checklist',
+        title: type === 'quick' ? 'Quick Checklist' : 'Spatial Board',
         createdAt: now,
         updatedAt: now,
+        panX: 0,
+        panY: 0,
+        zoom: 1,
+        strokes: [],
         items: [
-          { id: 'item-' + Date.now() + '-1', text: 'First priority item', checked: false },
-          { id: 'item-' + Date.now() + '-2', text: 'Second task item', checked: false }
+          { id: firstItemId, text: 'First priority item', checked: false },
+          { id: secondItemId, text: 'Second task item', checked: false }
+        ],
+        boxes: [
+          {
+            id: 'box-' + Date.now(),
+            title: 'Checklist #1',
+            x: 26,
+            y: 350,
+            items: [
+              { id: firstItemId, text: 'First priority item', checked: false },
+              { id: secondItemId, text: 'Second task item', checked: false }
+            ]
+          }
         ],
         stickies: type === 'spatial' ? [
           {
             id: 'st-' + Date.now(),
-            x: 85,
-            y: 115,
-            text: 'Tap here to add extra context or alternate options!',
-            targetItemIds: ['item-' + Date.now() + '-1']
+            x: 68,
+            y: 95,
+            text: 'Drag checklists or notes anywhere! Arrows are color-coded by item #.',
+            targetItemIds: [firstItemId, secondItemId]
           }
         ] : []
       };
@@ -1155,34 +1842,37 @@
       state.checklists.unshift(newList);
       activeChecklistId = newList.id;
       saveState();
-
-      if (type === 'quick') {
-        openScreen('quickChecklistScreen');
-      } else {
-        openScreen('spatialChecklistScreen');
-      }
+      openScreen(type === 'quick' ? 'quickChecklistScreen' : 'spatialChecklistScreen');
     }
 
     function renderBoardScreen() {
-      const infoCard = document.getElementById('gestureInfoCard');
-      infoCard.style.display = state.tutorialDismissed ? 'none' : 'block';
-
+      document.getElementById('gestureInfoCard').style.display = state.tutorialDismissed ? 'none' : 'block';
       const grid = document.getElementById('checklistsBoardGrid');
       grid.innerHTML = '';
 
       state.checklists.forEach(list => {
         const card = document.createElement('div');
         card.className = 'checklist-card liquid-glass';
-        const doneCount = list.items.filter(i => i.checked).length;
+
+        let totalItems = 0, doneItems = 0;
+        if (list.type === 'spatial') {
+          (list.boxes || []).forEach(b => {
+            totalItems += (b.items || []).length;
+            doneItems += (b.items || []).filter(i => i.checked).length;
+          });
+        } else {
+          totalItems = (list.items || []).length;
+          doneItems = (list.items || []).filter(i => i.checked).length;
+        }
 
         card.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <span class="badge ${list.type === 'quick' ? 'badge-quick' : 'badge-spatial'}">
-              ${list.type === 'quick' ? '→ Quick Checklist' : '← Spatial + Arrows'}
+              ${list.type === 'quick' ? '→ Quick Checklist' : `← Spatial (${(list.boxes || []).length} Box${(list.boxes || []).length > 1 ? 'es' : ''})`}
             </span>
-            <span style="font-size:11.5px; color:#6e6e73;">${doneCount}/${list.items.length} done</span>
+            <span style="font-size:11.5px; color:#6e6e73; font-weight:600;">${doneItems}/${totalItems} done</span>
           </div>
-          <div style="font-size:18px; font-weight:700; margin-bottom:6px;">${list.title}</div>
+          <div style="font-size:18px; font-weight:800; margin-bottom:6px;">${list.title}</div>
           <div style="font-size:12px; color:#6e6e73;">${formatDayDate(list.updatedAt)}</div>
           <div style="font-size:11px; color:#8e8e93; margin-top:2px;">Last edited: ${formatTime(list.updatedAt)}</div>
         `;
@@ -1194,13 +1884,9 @@
 
         attachLongPress(card, () => {
           openContextMenu(list.title, [
+            { label: `Created: ${formatDayDate(list.createdAt)} at ${formatTime(list.createdAt)}`, icon: '🕒', action: () => {} },
             {
-              label: `Created: ${formatDayDate(list.createdAt)} at ${formatTime(list.createdAt)}`,
-              icon: '🕒',
-              action: () => {}
-            },
-            {
-              label: 'Delete Checklist',
+              label: 'Delete Checklist Board',
               icon: '🗑️',
               danger: true,
               action: () => {
@@ -1223,6 +1909,7 @@
     function touchChecklistTimestamp(list) {
       list.updatedAt = new Date().toISOString();
       saveState();
+      updateHeaderTimestamps(list);
     }
 
     function updateCurrentChecklistTitle(val) {
@@ -1230,7 +1917,6 @@
       if (!list) return;
       list.title = val;
       touchChecklistTimestamp(list);
-      updateHeaderTimestamps(list);
     }
 
     function updateHeaderTimestamps(list) {
@@ -1240,36 +1926,37 @@
 
       if (dayDateEl) dayDateEl.textContent = formatDayDate(list.updatedAt);
       if (editedEl) editedEl.textContent = `Last edited at ${formatTime(list.updatedAt)}`;
-      if (spatialStamp) spatialStamp.textContent = `${formatDayDate(list.updatedAt)} • Edited ${formatTime(list.updatedAt)}`;
+      if (spatialStamp) spatialStamp.textContent = `${list.title} • Edited ${formatTime(list.updatedAt)}`;
     }
 
     function showChecklistCreationInfo() {
       const list = getCurrentChecklist();
       if (!list) return;
-      openContextMenu('Checklist Metadata Info', [
-        { label: `Created Day: ${formatDayDate(list.createdAt)}`, icon: '📅', action: () => {} },
+      openContextMenu('Checklist Creation Info', [
+        { label: `Board Title: ${list.title}`, icon: '📋', action: () => {} },
+        { label: `Created Date: ${formatDayDate(list.createdAt)}`, icon: '📅', action: () => {} },
         { label: `Created Time: ${formatTime(list.createdAt)}`, icon: '⏱️', action: () => {} },
-        { label: `Last Edited: ${formatTime(list.updatedAt)}`, icon: '✏️', action: () => {} },
-        { label: `Type: ${list.type === 'quick' ? 'Quick Checklist' : 'Spatial Arrow Checklist'}`, icon: '📌', action: () => {} }
+        { label: `Last Edited: ${formatTime(list.updatedAt)}`, icon: '✏️', action: () => {} }
       ]);
     }
 
-    /********************************************************************
-     * 5. QUICK CHECKLIST SCREEN (Left-to-Right Swipe)
-     ********************************************************************/
     function renderQuickChecklist() {
       const list = getCurrentChecklist();
       if (!list) return;
-
       document.getElementById('quickChecklistTitle').value = list.title;
       updateHeaderTimestamps(list);
 
       const container = document.getElementById('quickItemsContainer');
       container.innerHTML = '';
 
-      list.items.forEach(item => {
+      (list.items || []).forEach((item, idx) => {
         const row = document.createElement('div');
         row.className = 'quick-todo-row';
+
+        const badge = document.createElement('div');
+        badge.className = 'item-color-badge';
+        badge.style.background = getArrowColorByIndex(idx);
+        badge.textContent = `#${idx + 1}`;
 
         const check = document.createElement('div');
         check.className = 'bullet-check' + (item.checked ? ' checked' : '');
@@ -1286,35 +1973,21 @@
         input.oninput = () => {
           item.text = input.value;
           touchChecklistTimestamp(list);
-          updateHeaderTimestamps(list);
         };
 
-        attachLongPress(row, () => {
-          openContextMenu(item.text || 'Checklist Item', [
-            {
-              label: item.checked ? 'Mark Unfinished' : 'Mark Completed',
-              icon: '✓',
-              action: () => {
-                item.checked = !item.checked;
-                touchChecklistTimestamp(list);
-                renderQuickChecklist();
-              }
-            },
-            {
-              label: 'Delete Item',
-              icon: '🗑️',
-              danger: true,
-              action: () => {
-                list.items = list.items.filter(i => i.id !== item.id);
-                touchChecklistTimestamp(list);
-                renderQuickChecklist();
-              }
-            }
-          ]);
-        });
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '✕';
+        delBtn.style.cssText = 'border:none; background:transparent; color:#8e8e93; font-weight:700; cursor:pointer;';
+        delBtn.onclick = () => {
+          list.items = list.items.filter(i => i.id !== item.id);
+          touchChecklistTimestamp(list);
+          renderQuickChecklist();
+        };
 
+        row.appendChild(badge);
         row.appendChild(check);
         row.appendChild(input);
+        row.appendChild(delBtn);
         container.appendChild(row);
       });
     }
@@ -1322,26 +1995,155 @@
     function addQuickChecklistItem() {
       const list = getCurrentChecklist();
       if (!list) return;
-      list.items.push({
-        id: 'q-item-' + Date.now(),
-        text: 'New checklist item',
-        checked: false
-      });
+      list.items.push({ id: 'qi-' + Date.now(), text: 'New checklist item', checked: false });
       touchChecklistTimestamp(list);
       renderQuickChecklist();
     }
 
     /********************************************************************
-     * 6. SPATIAL CANVAS CHECKLIST + STICKY NOTES + CURVED ARROWS (Image 2)
+     * 7. SPATIAL MULTI-BOX CHECKLIST + MOVEABLE BOXES + COLOR-CODED ARROWS
      ********************************************************************/
     function renderSpatialChecklist() {
       const list = getCurrentChecklist();
-      if (!list) return;
+      if (!list || list.type !== 'spatial') return;
 
-      document.getElementById('spatialTitleInput').value = list.title;
+      applyViewportTransform('spatial', false);
+      renderInkLayer('spatial');
       updateHeaderTimestamps(list);
 
-      // Render Sticky Notes
+      // 1. Render All Moveable Checklist Boxes on this Board
+      const boxesLayer = document.getElementById('spatialBoxesLayer');
+      boxesLayer.innerHTML = '';
+
+      (list.boxes || []).forEach((box, boxIdx) => {
+        const boxEl = document.createElement('div');
+        boxEl.className = 'spatial-checklist-box';
+        boxEl.id = 'spatial-box-dom-' + box.id;
+        boxEl.style.left = box.x + 'px';
+        boxEl.style.top = box.y + 'px';
+
+        boxEl.innerHTML = `
+          <div class="box-drag-handle">
+            <span>⠿ DRAG CHECKLIST #${boxIdx + 1}</span>
+            <div style="display:flex; gap:6px;">
+              <button data-add-item="${box.id}" style="border:none; background:rgba(0,122,255,0.14); color:#007aff; border-radius:8px; padding:2px 8px; font-size:11px; font-weight:700; cursor:pointer;">+ Item</button>
+              ${list.boxes.length > 1 ? `<button data-del-box="${box.id}" style="border:none; background:rgba(255,59,48,0.14); color:#ff3b30; border-radius:8px; padding:2px 7px; font-size:11px; font-weight:700; cursor:pointer;">✕</button>` : ''}
+            </div>
+          </div>
+          <input type="text" value="${box.title}" data-box-title="${box.id}"
+            style="border:none; background:transparent; font-size:16px; font-weight:800; color:#1c1c1e; outline:none; width:100%; margin-bottom:6px;" />
+          <div class="box-items-container"></div>
+        `;
+
+        boxEl.querySelector(`[data-box-title="${box.id}"]`).addEventListener('input', e => {
+          box.title = e.target.value;
+          if (boxIdx === 0) list.title = e.target.value;
+          touchChecklistTimestamp(list);
+        });
+
+        boxEl.querySelector(`[data-add-item="${box.id}"]`).addEventListener('click', e => {
+          e.stopPropagation();
+          box.items.push({ id: 'sp-i-' + Date.now(), text: 'New item', checked: false });
+          touchChecklistTimestamp(list);
+          renderSpatialChecklist();
+          requestAnimationFrame(drawSpatialArrows);
+        });
+
+        const delBoxBtn = boxEl.querySelector(`[data-del-box="${box.id}"]`);
+        if (delBoxBtn) {
+          delBoxBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            list.boxes = list.boxes.filter(b => b.id !== box.id);
+            touchChecklistTimestamp(list);
+            renderSpatialChecklist();
+            requestAnimationFrame(drawSpatialArrows);
+          });
+        }
+
+        const itemsWrap = boxEl.querySelector('.box-items-container');
+        (box.items || []).forEach((item, itemIdx) => {
+          const itemColor = getArrowColorByIndex(itemIdx);
+          const row = document.createElement('div');
+          row.id = 'spatial-item-dom-' + item.id;
+          row.className = 'spatial-item-row' + (activeLinkingStickyId ? ' link-target-mode' : '');
+
+          const colorBadge = document.createElement('div');
+          colorBadge.className = 'item-color-badge';
+          colorBadge.style.background = itemColor;
+          colorBadge.textContent = `#${itemIdx + 1}`;
+
+          const bullet = document.createElement('div');
+          bullet.className = 'bullet-check' + (item.checked ? ' checked' : '');
+          bullet.onclick = e => {
+            e.stopPropagation();
+            if (activeLinkingStickyId) {
+              toggleArrowLink(activeLinkingStickyId, item.id);
+              return;
+            }
+            item.checked = !item.checked;
+            touchChecklistTimestamp(list);
+            renderSpatialChecklist();
+            requestAnimationFrame(drawSpatialArrows);
+          };
+
+          const textEl = document.createElement('div');
+          textEl.className = 'spatial-item-text' + (item.checked ? ' checked' : '');
+          textEl.contentEditable = activeLinkingStickyId ? 'false' : 'true';
+          textEl.textContent = item.text;
+          textEl.oninput = () => {
+            item.text = textEl.textContent;
+            touchChecklistTimestamp(list);
+            drawSpatialArrows();
+          };
+
+          row.onclick = () => {
+            if (activeLinkingStickyId) toggleArrowLink(activeLinkingStickyId, item.id);
+          };
+
+          attachLongPress(row, () => {
+            openContextMenu(`Item #${itemIdx + 1}: ${item.text}`, [
+              {
+                label: 'Create Sticky Note Pointing Here',
+                icon: '🟨',
+                action: () => {
+                  list.stickies.push({
+                    id: 'st-' + Date.now(),
+                    x: box.x + 40,
+                    y: Math.max(40, box.y - 230),
+                    text: 'Note for ' + item.text,
+                    targetItemIds: [item.id]
+                  });
+                  touchChecklistTimestamp(list);
+                  renderSpatialChecklist();
+                  requestAnimationFrame(drawSpatialArrows);
+                }
+              },
+              {
+                label: 'Delete Item',
+                icon: '🗑️',
+                danger: true,
+                action: () => {
+                  box.items = box.items.filter(i => i.id !== item.id);
+                  touchChecklistTimestamp(list);
+                  renderSpatialChecklist();
+                  requestAnimationFrame(drawSpatialArrows);
+                }
+              }
+            ]);
+          });
+
+          row.appendChild(colorBadge);
+          row.appendChild(bullet);
+          row.appendChild(textEl);
+          itemsWrap.appendChild(row);
+        });
+
+        // Make the entire Checklist Box freely moveable across the infinite canvas
+        makeWorldDraggable(boxEl, box, 'spatial', drawSpatialArrows);
+        boxesLayer.appendChild(boxEl);
+      });
+
+      // 2. Render Floating Sticky Notes
       const stickiesLayer = document.getElementById('spatialStickiesLayer');
       stickiesLayer.innerHTML = '';
 
@@ -1353,20 +2155,16 @@
         noteEl.style.top = sticky.y + 'px';
 
         noteEl.innerHTML = `
-          <div class="handle-dot handle-tl"></div>
-          <div class="handle-dot handle-tc"></div>
-          <div class="handle-dot handle-tr"></div>
-          <div class="handle-dot handle-ml"></div>
-          <div class="handle-dot handle-mr"></div>
-          <div class="handle-dot handle-bl"></div>
-          <div class="handle-dot handle-bc"></div>
-          <div class="handle-dot handle-br"></div>
+          <div class="sticky-drag-bar">⠿ DRAG NOTE</div>
+          <div class="handle-dot handle-tl"></div><div class="handle-dot handle-tc"></div><div class="handle-dot handle-tr"></div>
+          <div class="handle-dot handle-ml"></div><div class="handle-dot handle-mr"></div>
+          <div class="handle-dot handle-bl"></div><div class="handle-dot handle-bc"></div><div class="handle-dot handle-br"></div>
           <div class="sticky-content" contenteditable="true">${sticky.text.replace(/\n/g, '<br>')}</div>
           <div class="sticky-actions">
             <button class="point-btn ${activeLinkingStickyId === sticky.id ? 'linking' : ''}" data-sticky-link="${sticky.id}">
-              ${activeLinkingStickyId === sticky.id ? 'Tap Checklist Item Below ↓' : '↗ Point Arrow'}
+              ${activeLinkingStickyId === sticky.id ? 'Tap Any Checklist Item ↓' : '↗ Point Arrow'}
             </button>
-            <span style="color:#666; font-weight:600;">${(sticky.targetItemIds || []).length} linked</span>
+            <span style="color:#555; font-weight:700;">${(sticky.targetItemIds || []).length} linked</span>
           </div>
         `;
 
@@ -1377,40 +2175,35 @@
           drawSpatialArrows();
         });
 
-        const linkBtn = noteEl.querySelector('[data-sticky-link]');
-        linkBtn.addEventListener('click', e => {
+        noteEl.querySelector('[data-sticky-link]').addEventListener('click', e => {
           e.stopPropagation();
-          if (activeLinkingStickyId === sticky.id) {
-            activeLinkingStickyId = null;
-            showToast('Arrow linking finished');
-          } else {
-            activeLinkingStickyId = sticky.id;
-            showToast('Tap any checklist item below to point/unpoint arrow');
-          }
+          activeLinkingStickyId = activeLinkingStickyId === sticky.id ? null : sticky.id;
+          showToast(activeLinkingStickyId ? 'Tap any item in any checklist box to toggle arrow' : 'Arrow linking done');
           renderSpatialChecklist();
-          drawSpatialArrows();
+          requestAnimationFrame(drawSpatialArrows);
         });
 
-        makeDraggableSticky(noteEl, sticky, list);
+        makeWorldDraggable(noteEl, sticky, 'spatial', drawSpatialArrows);
 
         attachLongPress(noteEl, () => {
-          openContextMenu('Sticky Note Options', [
+          openContextMenu('Sticky Note Actions', [
             {
-              label: 'Point Arrow to Checklist Item',
+              label: 'Point Arrow to Checklist Item(s)',
               icon: '↗',
               action: () => {
                 activeLinkingStickyId = sticky.id;
                 renderSpatialChecklist();
+                requestAnimationFrame(drawSpatialArrows);
               }
             },
             {
-              label: 'Clear All Arrows from Note',
+              label: 'Clear Arrows from This Note',
               icon: '✂️',
               action: () => {
                 sticky.targetItemIds = [];
                 touchChecklistTimestamp(list);
                 renderSpatialChecklist();
-                drawSpatialArrows();
+                requestAnimationFrame(drawSpatialArrows);
               }
             },
             {
@@ -1421,7 +2214,7 @@
                 list.stickies = list.stickies.filter(s => s.id !== sticky.id);
                 touchChecklistTimestamp(list);
                 renderSpatialChecklist();
-                drawSpatialArrows();
+                requestAnimationFrame(drawSpatialArrows);
               }
             }
           ]);
@@ -1429,215 +2222,201 @@
 
         stickiesLayer.appendChild(noteEl);
       });
-
-      // Render Checklist Items Box
-      const itemsContainer = document.getElementById('spatialItemsList');
-      itemsContainer.innerHTML = '';
-
-      list.items.forEach(item => {
-        const row = document.createElement('div');
-        row.id = 'spatial-item-dom-' + item.id;
-        row.className = 'spatial-item-row' + (activeLinkingStickyId ? ' link-target-mode' : '');
-
-        const bullet = document.createElement('div');
-        bullet.className = 'bullet-check' + (item.checked ? ' checked' : '');
-        bullet.onclick = e => {
-          e.stopPropagation();
-          if (activeLinkingStickyId) {
-            toggleArrowLink(activeLinkingStickyId, item.id);
-            return;
-          }
-          item.checked = !item.checked;
-          touchChecklistTimestamp(list);
-          renderSpatialChecklist();
-          drawSpatialArrows();
-        };
-
-        const textEl = document.createElement('div');
-        textEl.className = 'spatial-item-text' + (item.checked ? ' checked' : '');
-        textEl.contentEditable = activeLinkingStickyId ? 'false' : 'true';
-        textEl.textContent = item.text;
-
-        textEl.oninput = () => {
-          item.text = textEl.textContent;
-          touchChecklistTimestamp(list);
-          drawSpatialArrows();
-        };
-
-        row.onclick = () => {
-          if (activeLinkingStickyId) {
-            toggleArrowLink(activeLinkingStickyId, item.id);
-          }
-        };
-
-        attachLongPress(row, () => {
-          openContextMenu(item.text, [
-            {
-              label: 'Create Sticky Note Pointing Here',
-              icon: '🟨',
-              action: () => {
-                const newSticky = {
-                  id: 'st-' + Date.now(),
-                  x: 80,
-                  y: 120,
-                  text: 'Note for ' + item.text,
-                  targetItemIds: [item.id]
-                };
-                list.stickies.push(newSticky);
-                selectedStickyId = newSticky.id;
-                touchChecklistTimestamp(list);
-                renderSpatialChecklist();
-                drawSpatialArrows();
-              }
-            },
-            {
-              label: 'Delete Checklist Item',
-              icon: '🗑️',
-              danger: true,
-              action: () => {
-                list.items = list.items.filter(i => i.id !== item.id);
-                touchChecklistTimestamp(list);
-                renderSpatialChecklist();
-                drawSpatialArrows();
-              }
-            }
-          ]);
-        });
-
-        row.appendChild(bullet);
-        row.appendChild(textEl);
-        itemsContainer.appendChild(row);
-      });
     }
 
-    function toggleArrowLink(stickyId, itemId) {
+    function addSpatialChecklistBox() {
       const list = getCurrentChecklist();
-      const sticky = list.stickies.find(s => s.id === stickyId);
-      if (!sticky) return;
-      sticky.targetItemIds = sticky.targetItemIds || [];
+      if (!list || list.type !== 'spatial') return;
+      const boxCount = (list.boxes || []).length + 1;
+      const center = screenToWorld('spatial', window.innerWidth / 2 - 150, window.innerHeight / 2 - 60);
 
-      if (sticky.targetItemIds.includes(itemId)) {
-        sticky.targetItemIds = sticky.targetItemIds.filter(id => id !== itemId);
-        showToast('Removed arrow link');
-      } else {
-        sticky.targetItemIds.push(itemId);
-        showToast('Arrow linked to item!');
-      }
-      activeLinkingStickyId = null;
+      list.boxes.push({
+        id: 'box-' + Date.now(),
+        title: `Checklist #${boxCount}`,
+        x: Math.round(center.x + (boxCount * 24)),
+        y: Math.round(center.y + (boxCount * 24)),
+        items: [
+          { id: 'item-' + Date.now() + '-1', text: 'First item (Blue Arrow)', checked: false },
+          { id: 'item-' + Date.now() + '-2', text: 'Second item (Green Arrow)', checked: false },
+          { id: 'item-' + Date.now() + '-3', text: 'Third item (Red Arrow)', checked: false }
+        ]
+      });
       touchChecklistTimestamp(list);
       renderSpatialChecklist();
-      drawSpatialArrows();
+      requestAnimationFrame(drawSpatialArrows);
+      showToast(`Added Moveable Checklist #${boxCount}`);
     }
 
     function addSpatialStickyNote() {
       const list = getCurrentChecklist();
-      if (!list) return;
-      const defaultTarget = list.items[0] ? [list.items[0].id] : [];
+      if (!list || list.type !== 'spatial') return;
+      const firstBox = list.boxes[0];
+      const defaultTarget = firstBox && firstBox.items[0] ? [firstBox.items[0].id] : [];
+      const center = screenToWorld('spatial', window.innerWidth / 2 - 110, window.innerHeight / 3 - 80);
+
       const newSticky = {
         id: 'st-' + Date.now(),
-        x: 65 + Math.floor(Math.random() * 40),
-        y: 110 + Math.floor(Math.random() * 40),
-        text: 'Extra note / option...',
+        x: Math.round(center.x),
+        y: Math.round(center.y),
+        text: 'Extra note / alternate option...',
         targetItemIds: defaultTarget
       };
       list.stickies.push(newSticky);
       selectedStickyId = newSticky.id;
       touchChecklistTimestamp(list);
       renderSpatialChecklist();
-      setTimeout(drawSpatialArrows, 20);
+      requestAnimationFrame(drawSpatialArrows);
     }
 
-    function addSpatialChecklistItem() {
+    function toggleArrowLink(stickyId, itemId) {
       const list = getCurrentChecklist();
-      if (!list) return;
-      list.items.push({
-        id: 'sp-item-' + Date.now(),
-        text: 'New item',
-        checked: false
-      });
+      const sticky = (list.stickies || []).find(s => s.id === stickyId);
+      if (!sticky) return;
+      sticky.targetItemIds = sticky.targetItemIds || [];
+
+      if (sticky.targetItemIds.includes(itemId)) {
+        sticky.targetItemIds = sticky.targetItemIds.filter(id => id !== itemId);
+        showToast('Removed Arrow');
+      } else {
+        sticky.targetItemIds.push(itemId);
+        showToast('Connected Color-Coded Arrow!');
+      }
+      activeLinkingStickyId = null;
       touchChecklistTimestamp(list);
       renderSpatialChecklist();
-      setTimeout(drawSpatialArrows, 20);
+      requestAnimationFrame(drawSpatialArrows);
     }
 
-    function makeDraggableSticky(el, stickyObj, list) {
-      let startX = 0, startY = 0, origX = 0, origY = 0, dragging = false;
+    /* Universal World-Space Dragging for Both Sticky Notes & Checklist Boxes */
+    function makeWorldDraggable(el, dataObj, viewportKey, onMoveCallback) {
+      let dragging = false;
+      let startWorld = null;
+      let origX = 0, origY = 0;
 
-      function start(clientX, clientY, target) {
-        if (target.closest('.sticky-content') && document.activeElement === target.closest('.sticky-content')) return;
-        if (target.closest('.point-btn')) return;
-        selectedStickyId = stickyObj.id;
-        document.querySelectorAll('.sticky-note').forEach(n => n.classList.remove('selected'));
-        el.classList.add('selected');
+      function isInteractiveChild(target) {
+        return target.closest('[contenteditable="true"], input, button, .bullet-check');
+      }
 
+      el.addEventListener('touchstart', e => {
+        if (e.touches.length !== 1 || isInteractiveChild(e.target)) return;
+        e.stopPropagation();
         dragging = true;
-        startX = clientX;
-        startY = clientY;
-        origX = stickyObj.x;
-        origY = stickyObj.y;
-      }
+        el.classList.add('dragging-item');
+        startWorld = screenToWorld(viewportKey, e.touches[0].clientX, e.touches[0].clientY);
+        origX = dataObj.x;
+        origY = dataObj.y;
+      }, { passive: true });
 
-      function move(clientX, clientY) {
-        if (!dragging) return;
-        stickyObj.x = Math.max(8, Math.min(window.innerWidth - 235, origX + (clientX - startX)));
-        stickyObj.y = Math.max(68, Math.min(window.innerHeight - 220, origY + (clientY - startY)));
-        el.style.left = stickyObj.x + 'px';
-        el.style.top = stickyObj.y + 'px';
-        drawSpatialArrows();
-      }
+      el.addEventListener('touchmove', e => {
+        if (!dragging || e.touches.length !== 1) return;
+        e.stopPropagation();
+        const curWorld = screenToWorld(viewportKey, e.touches[0].clientX, e.touches[0].clientY);
+        dataObj.x = Math.round(origX + (curWorld.x - startWorld.x));
+        dataObj.y = Math.round(origY + (curWorld.y - startWorld.y));
+        el.style.left = dataObj.x + 'px';
+        el.style.top = dataObj.y + 'px';
+        if (onMoveCallback) requestAnimationFrame(onMoveCallback);
+      }, { passive: true });
 
-      function end() {
+      el.addEventListener('touchend', () => {
         if (!dragging) return;
         dragging = false;
+        el.classList.remove('dragging-item');
         saveState();
-      }
+      });
 
-      el.addEventListener('touchstart', e => start(e.touches[0].clientX, e.touches[0].clientY, e.target), { passive: true });
-      el.addEventListener('touchmove', e => move(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
-      el.addEventListener('touchend', end);
+      el.addEventListener('mousedown', e => {
+        if (isInteractiveChild(e.target)) return;
+        e.stopPropagation();
+        dragging = true;
+        el.classList.add('dragging-item');
+        startWorld = screenToWorld(viewportKey, e.clientX, e.clientY);
+        origX = dataObj.x;
+        origY = dataObj.y;
+      });
 
-      el.addEventListener('mousedown', e => start(e.clientX, e.clientY, e.target));
-      window.addEventListener('mousemove', e => move(e.clientX, e.clientY));
-      window.addEventListener('mouseup', end);
+      window.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        const curWorld = screenToWorld(viewportKey, e.clientX, e.clientY);
+        dataObj.x = Math.round(origX + (curWorld.x - startWorld.x));
+        dataObj.y = Math.round(origY + (curWorld.y - startWorld.y));
+        el.style.left = dataObj.x + 'px';
+        el.style.top = dataObj.y + 'px';
+        if (onMoveCallback) requestAnimationFrame(onMoveCallback);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (!dragging) return;
+        dragging = false;
+        el.classList.remove('dragging-item');
+        saveState();
+      });
     }
 
-    /* Draws the Cyan Hand-Drawn Style Curved Arrow from Sticky Note to Checklist Item(s) (Matches Image 2) */
+    /* Draws Top-Layer Color-Coded Curved Arrows in World Coordinates */
     function drawSpatialArrows() {
       const svg = document.getElementById('spatialArrowSvg');
       const list = getCurrentChecklist();
       if (!svg || !list || list.type !== 'spatial') return;
 
       svg.innerHTML = '';
-      const areaRect = document.getElementById('spatialCanvasArea').getBoundingClientRect();
+      const svgOffset = 4000; // Matches top:-4000px, left:-4000px on svg.arrow-layer
+
+      // Map each itemId -> { box, boxEl, itemEl, itemIndex, color }
+      const itemMap = {};
+      (list.boxes || []).forEach(box => {
+        const boxEl = document.getElementById('spatial-box-dom-' + box.id);
+        (box.items || []).forEach((item, idx) => {
+          const itemEl = document.getElementById('spatial-item-dom-' + item.id);
+          itemMap[item.id] = {
+            box,
+            boxEl,
+            itemEl,
+            itemIndex: idx,
+            color: getArrowColorByIndex(idx)
+          };
+        });
+      });
 
       (list.stickies || []).forEach(sticky => {
         const noteEl = document.getElementById('sticky-dom-' + sticky.id);
         if (!noteEl) return;
-        const noteRect = noteEl.getBoundingClientRect();
+
+        const noteW = noteEl.offsetWidth || 225;
+        const noteH = noteEl.offsetHeight || 180;
 
         (sticky.targetItemIds || []).forEach(targetId => {
-          const itemEl = document.getElementById('spatial-item-dom-' + targetId);
-          if (!itemEl) return;
-          const bulletEl = itemEl.querySelector('.bullet-check') || itemEl;
-          const targetRect = bulletEl.getBoundingClientRect();
+          const targetInfo = itemMap[targetId];
+          if (!targetInfo || !targetInfo.boxEl || !targetInfo.itemEl) return;
 
-          // Start near bottom-left edge of sticky note (like Image 2)
-          const startX = noteRect.left - areaRect.left - 8;
-          const startY = noteRect.bottom - areaRect.top - 16;
+          const { box, itemEl, color, itemIndex } = targetInfo;
 
-          // Point right above the bullet point of the target checklist item
-          const endX = targetRect.left - areaRect.left + 10;
-          const endY = targetRect.top - areaRect.top - 8;
+          // Target item position in World Coordinates
+          const itemRelTop = itemEl.offsetTop + itemEl.offsetHeight / 2;
+          const targetLeftX = box.x + 16;
+          const targetRightX = box.x + (targetInfo.boxEl.offsetWidth || 325) - 16;
+          const targetY = box.y + itemRelTop;
 
-          // Control point curving outward to the left (matching Image 2 arc)
-          const ctrlX = Math.min(startX, endX) - 52;
-          const ctrlY = (startY + endY) / 2 - 15;
+          // Determine whether sticky note is to the left/above or right of the box
+          const noteCenterX = sticky.x + noteW / 2;
+          const boxCenterX = box.x + 160;
+          const connectOnRight = noteCenterX > boxCenterX + 120;
+
+          const startX = (connectOnRight ? sticky.x + noteW - 14 : sticky.x + 14) + svgOffset;
+          const startY = (sticky.y + noteH - 12) + svgOffset;
+
+          const endX = (connectOnRight ? targetRightX : targetLeftX) + svgOffset;
+          const endY = targetY + svgOffset;
+
+          // Outward curve control point so arrows arc cleanly around the box edge
+          const curveSpread = (connectOnRight ? 65 : -65) - (itemIndex * (connectOnRight ? -12 : 12));
+          const ctrlX = (connectOnRight ? Math.max(startX, endX) : Math.min(startX, endX)) + curveSpread;
+          const ctrlY = (startY + endY) / 2 - 18;
 
           const pathData = `M ${startX} ${startY} Q ${ctrlX} ${ctrlY} ${endX} ${endY}`;
 
-          // Compute tangent angle at end of quadratic curve for arrowhead
           const angle = Math.atan2(endY - ctrlY, endX - ctrlX);
-          const headLen = 18;
+          const headLen = 16;
           const wing1X = endX - headLen * Math.cos(angle - 0.55);
           const wing1Y = endY - headLen * Math.sin(angle - 0.55);
           const wing2X = endX - headLen * Math.cos(angle + 0.55);
@@ -1645,147 +2424,159 @@
 
           const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           group.innerHTML = `
-            <path d="${pathData}" fill="none" stroke="#47b5ff" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M ${wing1X} ${wing1Y} L ${endX} ${endY} L ${wing2X} ${wing2Y}" fill="none" stroke="#47b5ff" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+            <!-- High-contrast white halo so arrow stays 100% visible over glass & text -->
+            <path d="${pathData}" fill="none" stroke="#ffffff" stroke-width="9.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.92" />
+            <path d="M ${wing1X} ${wing1Y} L ${endX} ${endY} L ${wing2X} ${wing2Y}" fill="none" stroke="#ffffff" stroke-width="9.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.92" />
+            <!-- Item-index color-coded arrow stroke -->
+            <path d="${pathData}" fill="none" stroke="${color}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M ${wing1X} ${wing1Y} L ${endX} ${endY} L ${wing2X} ${wing2Y}" fill="none" stroke="${color}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="${startX}" cy="${startY}" r="5" fill="${color}" stroke="#fff" stroke-width="2" />
           `;
           svg.appendChild(group);
         });
       });
     }
 
-    window.addEventListener('resize', drawSpatialArrows);
-
-    /********************************************************************
-     * 7. HOME SCREEN FREEHAND DRAWING & STICKY NOTES (Image 1)
-     ********************************************************************/
-    let homeDrawingMode = false;
-    let spatialDrawingMode = false;
-    let homeStrokes = [];
-
-    function setupCanvasDrawing(canvasId, isHome) {
-      const canvas = document.getElementById(canvasId);
-      const ctx = canvas.getContext('2d');
-      let drawing = false;
-      let currentPoints = [];
-
-      function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        if (isHome) redrawHomeCanvas();
-      }
-      window.addEventListener('resize', resize);
-      resize();
-
-      function start(x, y) {
-        if ((isHome && !homeDrawingMode) || (!isHome && !spatialDrawingMode)) return;
-        drawing = true;
-        currentPoints = [{ x, y }];
-      }
-
-      function move(x, y) {
-        if (!drawing) return;
-        currentPoints.push({ x, y });
-        ctx.strokeStyle = '#007aff';
-        ctx.lineWidth = 3.5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        const len = currentPoints.length;
-        if (len > 1) {
-          ctx.beginPath();
-          ctx.moveTo(currentPoints[len - 2].x, currentPoints[len - 2].y);
-          ctx.lineTo(currentPoints[len - 1].x, currentPoints[len - 1].y);
-          ctx.stroke();
-        }
-      }
-
-      function end() {
-        if (!drawing) return;
-        drawing = false;
-        if (isHome && currentPoints.length > 1) {
-          homeStrokes.push(currentPoints);
-        }
-      }
-
-      canvas.addEventListener('touchstart', e => start(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
-      canvas.addEventListener('touchmove', e => move(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
-      canvas.addEventListener('touchend', end);
-
-      canvas.addEventListener('mousedown', e => start(e.clientX, e.clientY));
-      window.addEventListener('mousemove', e => move(e.clientX, e.clientY));
-      window.addEventListener('mouseup', end);
-    }
-
-    function redrawHomeCanvas() {
-      const canvas = document.getElementById('homeDrawingCanvas');
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = '#007aff';
-      ctx.lineWidth = 3.5;
-      ctx.lineCap = 'round';
-      homeStrokes.forEach(stroke => {
-        ctx.beginPath();
-        stroke.forEach((pt, idx) => {
-          if (idx === 0) ctx.moveTo(pt.x, pt.y);
-          else ctx.lineTo(pt.x, pt.y);
-        });
-        ctx.stroke();
-      });
-    }
-
-    function undoHomeStroke() {
-      homeStrokes.pop();
-      redrawHomeCanvas();
-      showToast('Undid last stroke');
-    }
-
-    function toggleHomeDrawing() {
-      homeDrawingMode = !homeDrawingMode;
-      document.getElementById('homeDrawingCanvas').classList.toggle('drawing-active', homeDrawingMode);
-      document.getElementById('homePenBtn').classList.toggle('active-tool', homeDrawingMode);
-      showToast(homeDrawingMode ? 'Freehand Pen Enabled' : 'Pen Disabled');
-    }
-
     function toggleSpatialDrawing() {
       spatialDrawingMode = !spatialDrawingMode;
-      document.getElementById('spatialDrawingCanvas').classList.toggle('drawing-active', spatialDrawingMode);
       document.getElementById('spatialPenBtn').classList.toggle('active-tool', spatialDrawingMode);
-      showToast(spatialDrawingMode ? 'Canvas Sketch Mode On' : 'Canvas Sketch Off');
-    }
-
-    function addHomeStickyNote(initialText) {
-      const container = document.getElementById('homeStickyContainer');
-      const stickyObj = {
-        id: 'home-st-' + Date.now(),
-        x: 70 + Math.floor(Math.random() * 50),
-        y: 130 + Math.floor(Math.random() * 70),
-        text: initialText
-      };
-      const el = document.createElement('div');
-      el.className = 'sticky-note selected';
-      el.style.left = stickyObj.x + 'px';
-      el.style.top = stickyObj.y + 'px';
-      el.innerHTML = `
-        <div class="handle-dot handle-tl"></div><div class="handle-dot handle-tc"></div><div class="handle-dot handle-tr"></div>
-        <div class="handle-dot handle-ml"></div><div class="handle-dot handle-mr"></div>
-        <div class="handle-dot handle-bl"></div><div class="handle-dot handle-bc"></div><div class="handle-dot handle-br"></div>
-        <div class="sticky-content" contenteditable="true">${stickyObj.text}</div>
-      `;
-      makeDraggableSticky(el, stickyObj, {});
-      attachLongPress(el, () => {
-        openContextMenu('Brainstorm Note', [
-          { label: 'Convert to Spatial Checklist', icon: '↗', action: () => createNewChecklist('spatial') },
-          { label: 'Delete Note', icon: '🗑️', danger: true, action: () => el.remove() }
-        ]);
-      });
-      container.appendChild(el);
+      showToast(spatialDrawingMode ? 'Canvas Sketch Mode On' : 'Pan & Drag Mode On');
     }
 
     /********************************************************************
-     * 8. iOS 27 TAP-AND-HOLD CONTEXT MENU SYSTEM
+     * 8. SHARE BUTTON -> AUTO-SAVE TO IPHONE LOCALSTORAGE + SHARE & BACKUP SHEET
+     ********************************************************************/
+    function openShareAndBackupSheet() {
+      // 1. Immediately save to iPhone LocalStorage as requested
+      saveState();
+      showToast('Saved to iPhone LocalStorage ✓');
+
+      // 2. Open Share & Backup Options Modal
+      openContextMenu('Saved to iPhone ✓ — Share & Backup', [
+        {
+          label: 'iPhone Share Sheet (Text Summary)',
+          icon: '📲',
+          action: () => triggerNativeShareText()
+        },
+        {
+          label: 'Share Backup File via iOS Share Sheet',
+          icon: '📦',
+          action: () => triggerNativeShareBackupFile()
+        },
+        {
+          label: 'Download Full JSON Backup File',
+          icon: '⬇️',
+          action: () => downloadJsonBackup()
+        },
+        {
+          label: 'Restore / Import from Backup File',
+          icon: '📂',
+          action: () => document.getElementById('backupFileInput').click()
+        },
+        {
+          label: 'Save Home Canvas to Brainstorm Vault',
+          icon: '🗂️',
+          action: () => saveCurrentHomeToVault()
+        }
+      ]);
+    }
+
+    function buildPlainTextSummary() {
+      const list = getCurrentChecklist();
+      let lines = ['📌 Daily Driver Summary'];
+      if (list) {
+        lines.push(`\nChecklist: ${list.title}`);
+        if (list.type === 'spatial') {
+          (list.boxes || []).forEach(b => {
+            lines.push(`\n[${b.title}]`);
+            (b.items || []).forEach((it, idx) => {
+              lines.push(`${idx + 1}. [${it.checked ? 'x' : ' '}] ${it.text}`);
+            });
+          });
+        } else {
+          (list.items || []).forEach((it, idx) => {
+            lines.push(`${idx + 1}. [${it.checked ? 'x' : ' '}] ${it.text}`);
+          });
+        }
+      }
+      return lines.join('\n');
+    }
+
+    async function triggerNativeShareText() {
+      const text = buildPlainTextSummary();
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'Daily Driver Checklists', text });
+        } catch (e) {}
+      } else {
+        navigator.clipboard?.writeText(text);
+        showToast('Summary copied to clipboard ✓');
+      }
+    }
+
+    async function triggerNativeShareBackupFile() {
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const fileName = `DailyDriver-Backup-${dateStr}.json`;
+      const jsonStr = JSON.stringify(state, null, 2);
+      const file = new File([jsonStr], fileName, { type: 'application/json' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: 'Daily Driver Full Backup',
+            text: 'Full offline backup of Daily Driver notes & checklists',
+            files: [file]
+          });
+          return;
+        } catch (e) {}
+      }
+      downloadJsonBackup();
+    }
+
+    function downloadJsonBackup() {
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `DailyDriver-Backup-${dateStr}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Downloaded Backup File ⬇️');
+    }
+
+    function handleBackupFileImport(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported && imported.checklists) {
+            state = imported;
+            saveState();
+            renderHomeScreen();
+            showToast('Backup Restored Successfully 🎉');
+          } else {
+            showToast('Invalid backup file format');
+          }
+        } catch (err) {
+          showToast('Could not parse backup file');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    /********************************************************************
+     * 9. iOS 27 TAP-AND-HOLD CONTEXT MENU SYSTEM
      ********************************************************************/
     function attachLongPress(element, callback) {
       let timer = null;
-      element.addEventListener('touchstart', () => {
+      element.addEventListener('touchstart', e => {
+        if (e.touches.length !== 1) return;
         timer = setTimeout(() => {
           if (navigator.vibrate) navigator.vibrate(15);
           callback();
@@ -1821,75 +2612,33 @@
     }
 
     function openHomeMoreMenu() {
-      openContextMenu('Daily Driver Workspace', [
+      openContextMenu('Home Brainstorm Actions', [
+        { label: 'Open Brainstorm Vault 🗂️', icon: '🗂️', action: () => openVaultModal() },
+        { label: 'Save Snapshot to Vault', icon: '💾', action: () => saveCurrentHomeToVault() },
+        { label: 'Reset Zoom & Center (100%)', icon: '🎯', action: () => resetViewport('home') },
         { label: 'Open Checklists Board', icon: '📋', action: () => openScreen('boardScreen') },
-        { label: 'New Quick Checklist (Swipe →)', icon: '⚡', action: () => createNewChecklist('quick') },
-        { label: 'New Spatial Arrow Checklist (Swipe ←)', icon: '🎯', action: () => createNewChecklist('spatial') },
-        { label: 'Clear Freehand Ink', icon: '🗑️', danger: true, action: () => { homeStrokes = []; redrawHomeCanvas(); } }
+        { label: 'Clear Home Canvas', icon: '🗑️', danger: true, action: () => clearHomeCanvas() }
       ]);
     }
 
-    function shareCurrentState() {
-      if (navigator.share) {
-        navigator.share({ title: 'Daily Driver PWA', text: 'My Daily Driver Checklists & Brainstorm Notes' }).catch(() => {});
-      } else {
-        showToast('Saved to iPhone LocalStorage ✓');
-      }
-    }
-
     /********************************************************************
-     * 9. INITIALIZE PWA MANIFEST & OFFLINE SERVICE WORKER
+     * 10. INITIALIZE INFINITE VIEWPORTS, SERVICE WORKER & PERSISTENCE
      ********************************************************************/
     window.addEventListener('DOMContentLoaded', () => {
-      setupCanvasDrawing('homeDrawingCanvas', true);
-      setupCanvasDrawing('spatialDrawingCanvas', false);
+      setupInfiniteViewportInteractions('home');
+      setupInfiniteViewportInteractions('spatial');
+      renderHomeScreen();
 
-      // Dynamic Manifest Injection for Standalone iOS / Android PWA
-      const manifest = {
-        name: "Daily Driver — iOS 27 Liquid Glass",
-        short_name: "DailyDriver",
-        start_url: ".",
-        display: "standalone",
-        background_color: "#fcfcfd",
-        theme_color: "#fcfcfd"
-      };
-      const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = URL.createObjectURL(manifestBlob);
-      document.head.appendChild(link);
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(() => {});
+        });
+      }
+
+      if (navigator.storage && navigator.storage.persist) {
+        navigator.storage.persist();
+      }
     });
   </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script>
-  // Register Service Worker for 100% offline access
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('Offline Service Worker Active'))
-        .catch((err) => console.error('SW Error:', err));
-    });
-  }
-
-  // Request permanent local storage persistence in iOS WebKit
-  if (navigator.storage && navigator.storage.persist) {
-    navigator.storage.persist().then((persistent) => {
-      console.log('Persistent Storage:', persistent);
-    });
-  }
-</script>
-
 </body>
 </html>
